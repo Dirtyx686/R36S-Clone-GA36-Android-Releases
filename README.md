@@ -5,6 +5,22 @@
 Exact runtime platform: Allwinner A33, 512 MiB physical RAM. Compatibility
 with ordinary R36S boards or other revisions is not established.
 
+## Download P39 — EXPERIMENTAL
+
+**64 GB or larger · Linux flasher · no games or user data**
+
+| Download | File |
+| --- | --- |
+| **[Dual-boot ROM](https://github.com/Dirtyx686/R36S-Clone-GA36-Android-Releases/releases/download/dualboot-p39-experimental/GA36-DualBoot-GA7-GA11-Compact-EN-P39.ga36.gz)** | GA7 + GA11 compact package |
+| **[IMAGE-INFOS.json](https://github.com/Dirtyx686/R36S-Clone-GA36-Android-Releases/releases/download/dualboot-p39-experimental/IMAGE-INFOS.json)** | Required beside the ROM |
+| **[Linux desktop flasher](https://github.com/Dirtyx686/R36S-Clone-GA36-Android-Releases/releases/download/dualboot-p39-experimental/GA36-Flasher-Linux-4.2-Compact.tar.gz)** | Extract and run on Linux x86-64 |
+| [Checksums](https://github.com/Dirtyx686/R36S-Clone-GA36-Android-Releases/releases/download/dualboot-p39-experimental/SHA256SUMS.txt) | SHA-256 download verification |
+| [All release files and sources](https://github.com/Dirtyx686/R36S-Clone-GA36-Android-Releases/releases/tag/dualboot-p39-experimental) | Expand **Assets** on the release page |
+
+Keep the ROM and `IMAGE-INFOS.json` in the same folder. Use GA36 Flasher 4.2:
+the compact `.ga36.gz` file is not a raw image for generic flashers. Writing
+overwrites the selected card. **GA11 audio is intermittent; sleep/wake has bugs.**
+
 ![GA36 dual-boot menu](assets/photos/dualboot-menu-ga7.jpg)
 
 ## Current dual-boot test
