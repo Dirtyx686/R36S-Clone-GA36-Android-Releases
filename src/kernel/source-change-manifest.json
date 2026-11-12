@@ -1,0 +1,9 @@
+{
+  "drivers/staging/android/binder.c": "dc65dc43fd240f413290c810f0cc61c9b6a8d248eba3d3f9ee5b1b52cf50b4b5",
+  "drivers/staging/android/binder7.c": "ccf4e6b45983936d89b878962cc18fc42dfe1ec161da304b9a1757c66adbfcf4",
+  "drivers/staging/android/binder7_trace_disabled.h": "2ba9c824f92cc150ef2fbc802ad54a973be299509d1bb2106138bac61dee661f",
+  "drivers/staging/android/ga36_binder_mux.c": "60e7883cc7c7f7ef5afc21c97143a639c8e545e681f3d8bf13036d997b8d438e",
+  "drivers/staging/android/ga36_binder_mux_policy.h": "53629f383570ffad6a633e4da19161582bc9d5e5ddb216264fbe5ad76328a906",
+  "drivers/staging/android/Makefile": "5b9d2bf96d4a4c1c4566e1957b1247e3280cc78738addeb9775e0b11f85b68c9",
+  "drivers/staging/android/Kconfig": "166771c14008b7d1dc6a9191f6f3e78574105dbc282ab93fb6e33d8674530fd5"
+}

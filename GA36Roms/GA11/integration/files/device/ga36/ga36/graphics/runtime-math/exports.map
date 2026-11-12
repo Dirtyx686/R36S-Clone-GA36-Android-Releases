@@ -1,0 +1,4 @@
+{
+  global: __aeabi_uldivmod; __popcountsi2;
+  local: *;
+};

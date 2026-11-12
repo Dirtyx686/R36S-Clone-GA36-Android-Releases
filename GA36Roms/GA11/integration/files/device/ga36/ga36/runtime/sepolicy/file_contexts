@@ -1,0 +1,21 @@
+/data/vendor/ga36(/.*)? u:object_r:ga36_runtime_data_file:s0
+/dev/mali u:object_r:gpu_device:s0
+/dev/mali0 u:object_r:gpu_device:s0
+/dev/disp u:object_r:graphics_device:s0
+/dev/fb0 u:object_r:graphics_device:s0
+/ga36logs(/.*)? u:object_r:ga36_bootlog_file:s0
+/ga36logs/logcat(/.*)? u:object_r:misc_logd_file:s0
+
+# Canonical early nodes: real inodes, not symlinks to un-restored /dev nodes.
+/dev/block/mmcblk0 u:object_r:ga36_pool_device:s0
+/dev/block/loop4 u:object_r:system_block_device:s0
+/dev/block/loop5 u:object_r:system_block_device:s0
+/dev/block/loop6 u:object_r:userdata_block_device:s0
+# Hidden before handoff. Persisted xattrs are set on the private SSD candidate.
+/ga36-container/ga36-android11/(system|vendor|data)\.img u:object_r:ga36_loop_image_file:s0
+
+# Software HAL has the standard gatekeeper domain, not generic vendor_file.
+/vendor/bin/hw/android\.hardware\.gatekeeper@1\.0-service\.software u:object_r:hal_gatekeeper_default_exec:s0
+
+# Static console pointer is carried in the verified bootstrap root archive.
+/ga36-pointer u:object_r:virtual_touchpad_exec:s0

@@ -1,0 +1,80 @@
+{
+  "repository": "Dirtyx686/R36S-Clone-GA36-Android-Releases",
+  "board": "GA36-MB V1.2-20260416",
+  "date": "2026-11-12",
+  "release_tag": "dualboot-p39-experimental",
+  "release_url": "https://github.com/Dirtyx686/R36S-Clone-GA36-Android-Releases/releases/tag/dualboot-p39-experimental",
+  "channel": "experimental prerelease",
+  "platform": "Allwinner A33 / 512 MiB physical RAM",
+  "minimum_card_bytes": 63909658624,
+  "public_binary_platforms": [
+    "Linux x86-64"
+  ],
+  "device_report": {
+    "GA7": "boots, sound works",
+    "GA11": "boots, audio intermittent",
+    "sleep_wake": "bugs"
+  },
+  "assets": [
+    {
+      "file": "GA36-Amaze-3.10-source-evidence.tar.gz",
+      "bytes": 4263389,
+      "sha256": "768d4e2fcefdaf274bf210926364a7530d3258ab7ae24a6a622d065bf157acd8"
+    },
+    {
+      "file": "GA36-Android11-P39-integration-source.tar.gz",
+      "bytes": 657932,
+      "sha256": "caaba5b810ace059f589a03c02b0f95cb071467939b0c9456f067e86c0e7dbb6"
+    },
+    {
+      "file": "GA36-BusyBox-1.20.0-source-evidence.tar.gz",
+      "bytes": 5167335,
+      "sha256": "ee5a7e8562ccfcc422190a22bdbaffe5c58d21420bebb6d7a10a93a6ac8319f2"
+    },
+    {
+      "file": "GA36-BusyBox-1.36.1-replacement-source-not-installed.tar.gz",
+      "bytes": 2515723,
+      "sha256": "767dbd831333c8afe46df9a51dede8e430901729e6e92aebb8c18791b2d8aa6d"
+    },
+    {
+      "file": "GA36-DualBoot-GA7-GA11-Compact-EN-P39.ga36.gz",
+      "bytes": 754064053,
+      "sha256": "e90d2dfb7df1a0ad8e6bb45f2c70783983bccc3d33d053ad59db633680a99262"
+    },
+    {
+      "file": "GA36-Flasher-Linux-4.2-Compact-source.tar.gz",
+      "bytes": 6917258,
+      "sha256": "0ce57de8f885df7cd4b149e52d9d1be83ccb926f43efb8da0564a9e10f372204"
+    },
+    {
+      "file": "GA36-Flasher-Linux-4.2-Compact.tar.gz",
+      "bytes": 5433035,
+      "sha256": "3990fcd04250721bcf8aaa8653e84c037755bb80970ebdec0a668d8a3e4fd289"
+    },
+    {
+      "file": "GA36-Kernel-K11-82-source.tar.gz",
+      "bytes": 135753089,
+      "sha256": "11cdda853e7f7f1742a6b065158af5ff458a594493b61951ba9b31edde5fa93d"
+    },
+    {
+      "file": "GA36-P39-dual-boot-native-source.tar.gz",
+      "bytes": 56111,
+      "sha256": "19892a1f18e1bffde42a9b129cebd63c2722cca762b0310a2fc3f0471b6ad772"
+    },
+    {
+      "file": "GA36-P39-launcher-native-source.tar.gz",
+      "bytes": 63154,
+      "sha256": "e37c772830c4a72be0d5b61fbf0d248997d36d6212d4dbcc1e876362dc6f5bf5"
+    },
+    {
+      "file": "GA36-e2fsprogs-1.45.4-source.tar.gz",
+      "bytes": 8336574,
+      "sha256": "a6c19abe51c1ea89bfd734c8524ef3469695ef4a9264d0de5e439905715da21d"
+    },
+    {
+      "file": "IMAGE-INFOS.json",
+      "bytes": 1318,
+      "sha256": "bd56001a69feba94f507c55aac28b727352b0d3166962c36db15401c4a09fea8"
+    }
+  ]
+}

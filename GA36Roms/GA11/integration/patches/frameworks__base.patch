@@ -1,0 +1,598 @@
+diff --git a/Android.bp b/Android.bp
+index ad0e6ca2..4397534d 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -592,6 +592,8 @@ java_library {
+ gensrcs {
+     name: "framework-javastream-protos",
+     depfile: true,
++    // Keep each shell argument below Linux MAX_ARG_STRLEN with long SSD paths.
++    shard_size: 20,
+ 
+     tools: [
+         "aprotoc",
+@@ -620,6 +622,7 @@ gensrcs {
+ gensrcs {
+     name: "framework-cppstream-protos",
+     depfile: true,
++    shard_size: 20,
+ 
+     tools: [
+         "aprotoc",
+diff --git a/apex/jobscheduler/service/java/com/android/server/usage/AppStandbyController.java b/apex/jobscheduler/service/java/com/android/server/usage/AppStandbyController.java
+index 403e8b55..749fcd62 100644
+--- a/apex/jobscheduler/service/java/com/android/server/usage/AppStandbyController.java
++++ b/apex/jobscheduler/service/java/com/android/server/usage/AppStandbyController.java
+@@ -450,7 +450,10 @@ public class AppStandbyController implements AppStandbyInternal {
+             settingsObserver.registerObserver();
+             settingsObserver.updateSettings();
+ 
+-            mAppWidgetManager = mContext.getSystemService(AppWidgetManager.class);
++            // AppWidgetService is only started when this feature is advertised.
++            mAppWidgetManager = mContext.getPackageManager().hasSystemFeature(
++                    PackageManager.FEATURE_APP_WIDGETS)
++                    ? mContext.getSystemService(AppWidgetManager.class) : null;
+ 
+             mInjector.registerDisplayListener(mDisplayListener, mHandler);
+             synchronized (mAppIdleLock) {
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index bf0048fa..e03bf496 100644
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -4411,4 +4411,6 @@
+     <!-- List of protected packages that require biometric authentication for modification
+          (Disable, force-stop or uninstalling updates). -->
+     <string-array name="config_biometric_protected_package_names" translatable="false" />
++    <!-- Dedicated console: opt-in permanent system dark mode. -->
++    <bool name="config_ga36ForceDarkMode">false</bool>
+ </resources>
+diff --git a/core/res/res/values/symbols.xml b/core/res/res/values/symbols.xml
+index bd37196f..eace6aac 100644
+--- a/core/res/res/values/symbols.xml
++++ b/core/res/res/values/symbols.xml
+@@ -4063,4 +4063,5 @@
+   <!-- List of protected packages that require biometric authentication for modification -->
+   <java-symbol type="array" name="config_biometric_protected_package_names" />
+ 
++  <java-symbol type="bool" name="config_ga36ForceDarkMode" />
+ </resources>
+diff --git a/packages/SettingsLib/src/com/android/settingslib/wifi/WifiStatusTracker.java b/packages/SettingsLib/src/com/android/settingslib/wifi/WifiStatusTracker.java
+index 44c920c7..4ea0ca81 100644
+--- a/packages/SettingsLib/src/com/android/settingslib/wifi/WifiStatusTracker.java
++++ b/packages/SettingsLib/src/com/android/settingslib/wifi/WifiStatusTracker.java
+@@ -118,6 +118,9 @@ public class WifiStatusTracker {
+     }
+ 
+     public void setListening(boolean listening) {
++        if (mWifiManager == null) {
++            return;
++        }
+         if (listening) {
+             mNetworkScoreManager.registerNetworkScoreCache(NetworkKey.TYPE_WIFI,
+                     mWifiNetworkScoreCache, NetworkScoreManager.SCORE_FILTER_CURRENT_NETWORK);
+@@ -217,6 +220,12 @@ public class WifiStatusTracker {
+     }
+ 
+     private void updateStatusLabel() {
++        if (mWifiManager == null) {
++            isDefaultNetwork = false;
++            isCaptivePortal = false;
++            statusLabel = null;
++            return;
++        }
+         NetworkCapabilities networkCapabilities;
+         isDefaultNetwork = false;
+         if (mDefaultNetworkCapabilities != null) {
+diff --git a/packages/SystemUI/src/com/android/keyguard/CarrierTextController.java b/packages/SystemUI/src/com/android/keyguard/CarrierTextController.java
+index b1e14346..ababcceb 100644
+--- a/packages/SystemUI/src/com/android/keyguard/CarrierTextController.java
++++ b/packages/SystemUI/src/com/android/keyguard/CarrierTextController.java
+@@ -322,7 +322,7 @@ public class CarrierTextController {
+                     // hack for WFC (IWLAN) not turning off immediately once
+                     // Wi-Fi is disassociated or disabled
+                     if (ss.getRilDataRadioTechnology() != ServiceState.RIL_RADIO_TECHNOLOGY_IWLAN
+-                            || (mWifiManager.isWifiEnabled()
++                            || (mWifiManager != null && mWifiManager.isWifiEnabled()
+                             && mWifiManager.getConnectionInfo() != null
+                             && mWifiManager.getConnectionInfo().getBSSID() != null)) {
+                         if (DEBUG) {
+diff --git a/packages/SystemUI/src/com/android/systemui/dagger/SystemServicesModule.java b/packages/SystemUI/src/com/android/systemui/dagger/SystemServicesModule.java
+index e2361d8f..8472b1b5 100644
+--- a/packages/SystemUI/src/com/android/systemui/dagger/SystemServicesModule.java
++++ b/packages/SystemUI/src/com/android/systemui/dagger/SystemServicesModule.java
+@@ -318,6 +318,7 @@ public class SystemServicesModule {
+ 
+     @Provides
+     @Singleton
++    @Nullable
+     static WifiManager provideWifiManager(Context context) {
+         return context.getSystemService(WifiManager.class);
+     }
+diff --git a/packages/SystemUI/src/com/android/systemui/keyguard/KeyguardViewMediator.java b/packages/SystemUI/src/com/android/systemui/keyguard/KeyguardViewMediator.java
+index d60721bf..357ff78a 100644
+--- a/packages/SystemUI/src/com/android/systemui/keyguard/KeyguardViewMediator.java
++++ b/packages/SystemUI/src/com/android/systemui/keyguard/KeyguardViewMediator.java
+@@ -778,7 +778,8 @@ public class KeyguardViewMediator extends SystemUI implements Dumpable {
+     }
+ 
+     private void setupLocked() {
+-        mProfileManager = ProfileManager.getInstance(mContext);
++        mProfileManager = mContext.getPackageManager().hasSystemFeature("org.lineageos.profiles")
++                ? ProfileManager.getInstance(mContext) : null;
+ 
+         mShowKeyguardWakeLock = mPM.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "show keyguard");
+         mShowKeyguardWakeLock.setReferenceCounted(false);
+diff --git a/packages/SystemUI/src/com/android/systemui/media/MediaDeviceManager.kt b/packages/SystemUI/src/com/android/systemui/media/MediaDeviceManager.kt
+index a993d00d..2a4c5966 100644
+--- a/packages/SystemUI/src/com/android/systemui/media/MediaDeviceManager.kt
++++ b/packages/SystemUI/src/com/android/systemui/media/MediaDeviceManager.kt
+@@ -30,6 +30,7 @@ import com.android.systemui.dump.DumpManager
+ import java.io.FileDescriptor
+ import java.io.PrintWriter
+ import java.util.concurrent.Executor
++import dagger.Lazy
+ import javax.inject.Inject
+ 
+ private const val PLAYBACK_TYPE_UNKNOWN = 0
+@@ -40,7 +41,7 @@ private const val PLAYBACK_TYPE_UNKNOWN = 0
+ class MediaDeviceManager @Inject constructor(
+     private val controllerFactory: MediaControllerFactory,
+     private val localMediaManagerFactory: LocalMediaManagerFactory,
+-    private val mr2manager: MediaRouter2Manager,
++    private val mr2manager: Lazy<MediaRouter2Manager>,
+     @Main private val fgExecutor: Executor,
+     @Background private val bgExecutor: Executor,
+     dumpManager: DumpManager
+@@ -159,10 +160,10 @@ class MediaDeviceManager @Inject constructor(
+ 
+         fun dump(fd: FileDescriptor, pw: PrintWriter, args: Array<String>) {
+             val routingSession = controller?.let {
+-                mr2manager.getRoutingSessionForMediaController(it)
++                mr2manager.get().getRoutingSessionForMediaController(it)
+             }
+             val selectedRoutes = routingSession?.let {
+-                mr2manager.getSelectedRoutes(it)
++                mr2manager.get().getSelectedRoutes(it)
+             }
+             with(pw) {
+                 println("    current device is ${current?.name}")
+@@ -197,7 +198,7 @@ class MediaDeviceManager @Inject constructor(
+         private fun updateCurrent() {
+             val device = localMediaManager.getCurrentConnectedDevice()
+             controller?.let {
+-                val route = mr2manager.getRoutingSessionForMediaController(it)
++                val route = mr2manager.get().getRoutingSessionForMediaController(it)
+                 // If we get a null route, then don't trust the device. Just set to null to disable the
+                 // output switcher chip.
+                 current = if (route != null) device else null
+diff --git a/packages/SystemUI/src/com/android/systemui/media/dialog/MediaOutputDialogFactory.kt b/packages/SystemUI/src/com/android/systemui/media/dialog/MediaOutputDialogFactory.kt
+index e1a504c3..3c6a6a9c 100644
+--- a/packages/SystemUI/src/com/android/systemui/media/dialog/MediaOutputDialogFactory.kt
++++ b/packages/SystemUI/src/com/android/systemui/media/dialog/MediaOutputDialogFactory.kt
+@@ -24,6 +24,7 @@ import com.android.settingslib.bluetooth.LocalBluetoothManager
+ import com.android.systemui.plugins.ActivityStarter
+ import com.android.systemui.statusbar.notification.NotificationEntryManager
+ import com.android.systemui.statusbar.phone.ShadeController
++import dagger.Lazy
+ import javax.inject.Inject
+ 
+ /**
+@@ -37,7 +38,7 @@ class MediaOutputDialogFactory @Inject constructor(
+     private val starter: ActivityStarter,
+     private val notificationEntryManager: NotificationEntryManager,
+     private val uiEventLogger: UiEventLogger,
+-    private val routerManager: MediaRouter2Manager
++    private val routerManager: Lazy<MediaRouter2Manager>
+ ) {
+     companion object {
+         var mediaOutputDialog: MediaOutputDialog? = null
+@@ -48,7 +49,7 @@ class MediaOutputDialogFactory @Inject constructor(
+         mediaOutputDialog?.dismiss()
+         mediaOutputDialog = MediaOutputController(context, packageName, aboveStatusBar,
+                 mediaSessionManager, lbm, shadeController, starter, notificationEntryManager,
+-                uiEventLogger, routerManager).run {
++                uiEventLogger, routerManager.get()).run {
+             MediaOutputDialog(context, aboveStatusBar, this, uiEventLogger)
+         }
+     }
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java b/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
+index 5b3c3a38..25c538c1 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java
+@@ -54,6 +54,8 @@ import android.util.Log;
+ import android.util.MathUtils;
+ import android.util.SparseArray;
+ 
++import androidx.annotation.Nullable;
++
+ import com.android.internal.annotations.GuardedBy;
+ import com.android.internal.annotations.VisibleForTesting;
+ import com.android.settingslib.net.DataUsageController;
+@@ -95,7 +97,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
+ 
+     private final Context mContext;
+     private final TelephonyManager mPhone;
+-    private final WifiManager mWifiManager;
++    @Nullable private final WifiManager mWifiManager;
+     private final ConnectivityManager mConnectivityManager;
+     private final SubscriptionManager mSubscriptionManager;
+     private final boolean mHasMobileDataFeature;
+@@ -175,7 +177,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
+     public NetworkControllerImpl(Context context, @Background Looper bgLooper,
+             DeviceProvisionedController deviceProvisionedController,
+             BroadcastDispatcher broadcastDispatcher, ConnectivityManager connectivityManager,
+-            TelephonyManager telephonyManager, WifiManager wifiManager,
++            TelephonyManager telephonyManager, @Nullable WifiManager wifiManager,
+             NetworkScoreManager networkScoreManager) {
+         this(context, connectivityManager,
+                 telephonyManager,
+@@ -193,7 +195,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
+ 
+     @VisibleForTesting
+     NetworkControllerImpl(Context context, ConnectivityManager connectivityManager,
+-            TelephonyManager telephonyManager, WifiManager wifiManager,
++            TelephonyManager telephonyManager, @Nullable WifiManager wifiManager,
+             NetworkScoreManager networkScoreManager,
+             SubscriptionManager subManager, Config config, Looper bgLooper,
+             CallbackHandler callbackHandler,
+@@ -540,6 +542,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
+ 
+     @Override
+     public void setWifiEnabled(final boolean enabled) {
++        if (mWifiManager == null) {
++            return;
++        }
+         new AsyncTask<Void, Void, Void>() {
+             @Override
+             protected Void doInBackground(Void... args) {
+diff --git a/packages/SystemUI/src/com/android/systemui/theme/ThemeOverlayController.java b/packages/SystemUI/src/com/android/systemui/theme/ThemeOverlayController.java
+index 76e74334..d2f3a447 100644
+--- a/packages/SystemUI/src/com/android/systemui/theme/ThemeOverlayController.java
++++ b/packages/SystemUI/src/com/android/systemui/theme/ThemeOverlayController.java
+@@ -99,17 +99,19 @@ public class ThemeOverlayController extends SystemUI {
+     private OverlayManager mOverlayManager;
+ 
+     private void applyBlackTheme(boolean state) {
+-        UserHandle userId = UserHandle.of(ActivityManager.getCurrentUser());
+-        try {
+-            mOverlayManager.setEnabled(OVERLAY_BERRY_BLACK_THEME, state, userId);
+-            if (DEBUG) {
+-                Log.d(TAG, "applyBlackTheme: overlayPackage="
+-                        + OVERLAY_BERRY_BLACK_THEME + " userId=" + userId);
++        final UserHandle userId = UserHandle.of(ActivityManager.getCurrentUser());
++        // Overlay Binder work and possible idmap disk I/O must not hold up SystemUI startup.
++        mBgHandler.post(() -> {
++            try {
++                android.content.om.OverlayInfo info =
++                        mOverlayManager.getOverlayInfo(OVERLAY_BERRY_BLACK_THEME, userId);
++                if (info != null && info.isEnabled() != state) {
++                    mOverlayManager.setEnabled(OVERLAY_BERRY_BLACK_THEME, state, userId);
++                }
++            } catch (Exception e) {
++                Log.e(TAG, "Failed to apply black theme for user " + userId, e);
+             }
+-        } catch (Exception e) {
+-            Log.e(TAG, "Failed to " + (state ? "enable" : "disable")
+-                    + " overlay " + OVERLAY_BERRY_BLACK_THEME + " for user " + userId);
+-        }
++        });
+     }
+ 
+     @Override
+diff --git a/packages/SystemUI/tests/src/com/android/systemui/media/MediaDeviceManagerTest.kt b/packages/SystemUI/tests/src/com/android/systemui/media/MediaDeviceManagerTest.kt
+index ab3b2089..efeef62e 100644
+--- a/packages/SystemUI/tests/src/com/android/systemui/media/MediaDeviceManagerTest.kt
++++ b/packages/SystemUI/tests/src/com/android/systemui/media/MediaDeviceManagerTest.kt
+@@ -87,7 +87,7 @@ public class MediaDeviceManagerTest : SysuiTestCase() {
+     fun setUp() {
+         fakeFgExecutor = FakeExecutor(FakeSystemClock())
+         fakeBgExecutor = FakeExecutor(FakeSystemClock())
+-        manager = MediaDeviceManager(controllerFactory, lmmFactory, mr2, fakeFgExecutor,
++        manager = MediaDeviceManager(controllerFactory, lmmFactory, dagger.Lazy { mr2 }, fakeFgExecutor,
+                 fakeBgExecutor, dumpster)
+         manager.addListener(listener)
+ 
+diff --git a/services/core/java/com/android/server/UiModeManagerService.java b/services/core/java/com/android/server/UiModeManagerService.java
+index 4ff6dac0..bf712d4f 100644
+--- a/services/core/java/com/android/server/UiModeManagerService.java
++++ b/services/core/java/com/android/server/UiModeManagerService.java
+@@ -130,6 +130,7 @@ final class UiModeManagerService extends SystemService {
+     private boolean mUiModeLocked = false;
+     // flag set by resource, whether to night mode change for normal all or not.
+     private boolean mNightModeLocked = false;
++    private final boolean mGa36ForceDarkMode;
+ 
+     int mCurUiMode = 0;
+     private int mSetUiMode = 0;
+@@ -163,6 +164,8 @@ final class UiModeManagerService extends SystemService {
+     public UiModeManagerService(Context context) {
+         super(context);
+         mConfiguration.setToDefaults();
++        mGa36ForceDarkMode = context.getResources().getBoolean(
++                com.android.internal.R.bool.config_ga36ForceDarkMode);
+     }
+ 
+     @VisibleForTesting
+@@ -508,6 +511,13 @@ final class UiModeManagerService extends SystemService {
+      * @return True if the new value is different from the old value. False otherwise.
+      */
+     private boolean updateNightModeFromSettingsLocked(Context context, Resources res, int userId) {
++        if (mGa36ForceDarkMode) {
++            final boolean changed = mNightMode != MODE_NIGHT_YES;
++            mNightMode = MODE_NIGHT_YES;
++            mOverrideNightModeOn = false;
++            mOverrideNightModeOff = false;
++            return changed;
++        }
+         if (mCarModeEnabled || mCar) {
+             return false;
+         }
+@@ -676,6 +686,7 @@ final class UiModeManagerService extends SystemService {
+ 
+         @Override
+         public void setNightMode(int mode) {
++            if (mGa36ForceDarkMode) return;
+             if (isNightModeLocked() && (getContext().checkCallingOrSelfPermission(
+                     android.Manifest.permission.MODIFY_DAY_NIGHT_MODE)
+                     != PackageManager.PERMISSION_GRANTED)) {
+@@ -737,7 +748,7 @@ final class UiModeManagerService extends SystemService {
+         @Override
+         public boolean isNightModeLocked() {
+             synchronized (mLock) {
+-                return mNightModeLocked;
++                return mNightModeLocked || mGa36ForceDarkMode;
+             }
+         }
+ 
+@@ -755,6 +766,7 @@ final class UiModeManagerService extends SystemService {
+ 
+         @Override
+         public boolean setNightModeActivated(boolean active) {
++            if (mGa36ForceDarkMode) return active;
+             if (isNightModeLocked() && (getContext().checkCallingOrSelfPermission(
+                     android.Manifest.permission.MODIFY_DAY_NIGHT_MODE)
+                     != PackageManager.PERMISSION_GRANTED)) {
+@@ -1080,6 +1092,11 @@ final class UiModeManagerService extends SystemService {
+     }
+ 
+     private void updateConfigurationLocked() {
++        if (mGa36ForceDarkMode) {
++            mNightMode = MODE_NIGHT_YES;
++            mOverrideNightModeOn = false;
++            mOverrideNightModeOff = false;
++        }
+         int uiMode = mDefaultUiModeType;
+         if (mUiModeLocked) {
+             // no-op, keeps default one
+diff --git a/services/core/java/com/android/server/am/ActivityManagerConstants.java b/services/core/java/com/android/server/am/ActivityManagerConstants.java
+index 00d8208e..9b7dabb5 100644
+--- a/services/core/java/com/android/server/am/ActivityManagerConstants.java
++++ b/services/core/java/com/android/server/am/ActivityManagerConstants.java
+@@ -91,7 +91,8 @@ final class ActivityManagerConstants extends ContentObserver {
+     static final String KEY_FGS_START_FOREGROUND_TIMEOUT = "fgs_start_foreground_timeout";
+     static final String KEY_PENDINGINTENT_WARNING_THRESHOLD = "pendingintent_warning_threshold";
+ 
+-    private static final int DEFAULT_MAX_CACHED_PROCESSES = 32;
++    private static final int DEFAULT_MAX_CACHED_PROCESSES =
++            "ga36".equals(android.os.SystemProperties.get("ro.hardware")) ? 6 : 32;
+     private static final long DEFAULT_BACKGROUND_SETTLE_TIME = 60*1000;
+     private static final long DEFAULT_FGSERVICE_MIN_SHOWN_TIME = 2*1000;
+     private static final long DEFAULT_FGSERVICE_MIN_REPORT_TIME = 3*1000;
+diff --git a/services/core/java/com/android/server/policy/PhoneWindowManager.java b/services/core/java/com/android/server/policy/PhoneWindowManager.java
+index 28724e2e..f8e8a7e4 100644
+--- a/services/core/java/com/android/server/policy/PhoneWindowManager.java
++++ b/services/core/java/com/android/server/policy/PhoneWindowManager.java
+@@ -1654,6 +1654,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+     }
+ 
+     void showGlobalActionsInternal() {
++        // GA36's persistent launcher owns the controller-friendly power menu.
++        // Send its existing request before ever creating either stock provider;
++        // otherwise SystemUI and the launcher race to display two menus.
++        if ("ga36".equals(SystemProperties.get("ro.hardware"))) {
++            sendCloseSystemWindows(SYSTEM_DIALOG_REASON_GLOBAL_ACTIONS);
++            mPowerManager.userActivity(SystemClock.uptimeMillis(), false);
++            return;
++        }
+         if (mGlobalActions == null) {
+             mGlobalActions = new GlobalActions(mContext, mWindowManagerFuncs);
+         }
+diff --git a/services/core/java/com/android/server/stats/pull/StatsPullAtomService.java b/services/core/java/com/android/server/stats/pull/StatsPullAtomService.java
+index 68ff0229..1d9a24dc 100644
+--- a/services/core/java/com/android/server/stats/pull/StatsPullAtomService.java
++++ b/services/core/java/com/android/server/stats/pull/StatsPullAtomService.java
+@@ -688,7 +688,9 @@ public class StatsPullAtomService extends SystemService {
+     void initializePullersState() {
+         // Get Context Managers
+         mStatsManager = (StatsManager) mContext.getSystemService(Context.STATS_MANAGER);
+-        mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
++        // Headless/offline products may not start WifiService at all.
++        mWifiManager = mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI)
++                ? (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE) : null;
+         mTelephony = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+         mSubscriptionManager = (SubscriptionManager)
+                 mContext.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+diff --git a/services/core/jni/com_android_server_am_BatteryStatsService.cpp b/services/core/jni/com_android_server_am_BatteryStatsService.cpp
+index b08868e2..74786df3 100644
+--- a/services/core/jni/com_android_server_am_BatteryStatsService.cpp
++++ b/services/core/jni/com_android_server_am_BatteryStatsService.cpp
+@@ -340,7 +340,7 @@ static bool initializePowerStats() {
+ // The caller must be holding gPowerHalMutex.
+ static bool getPowerStatsHalLocked() {
+     if (gPowerStatsHalV1_0 == nullptr) {
+-        gPowerStatsHalV1_0 = android::hardware::power::stats::V1_0::IPowerStats::getService();
++        gPowerStatsHalV1_0 = android::hardware::power::stats::V1_0::IPowerStats::tryGetService();
+         if (gPowerStatsHalV1_0 == nullptr) {
+             ALOGE("Unable to get power.stats HAL service.");
+             return false;
+@@ -833,13 +833,13 @@ static jint getPowerHalSubsystemData(JNIEnv* env, jobject outBuf) {
+ static void setUpPowerStatsLocked() {
+     // First see if power.stats HAL is available. Fall back to power HAL if
+     // power.stats HAL is unavailable.
+-    if (android::hardware::power::stats::V1_0::IPowerStats::getService() != nullptr) {
++    if (android::hardware::power::stats::V1_0::IPowerStats::tryGetService() != nullptr) {
+         ALOGI("Using power.stats HAL");
+         gGetLowPowerStatsImpl = getPowerStatsHalLowPowerData;
+         gGetPlatformLowPowerStatsImpl = getPowerStatsHalPlatformData;
+         gGetSubsystemLowPowerStatsImpl = getPowerStatsHalSubsystemData;
+         gGetRailEnergyPowerStatsImpl = getPowerStatsHalRailEnergyData;
+-    } else if (android::hardware::power::V1_0::IPower::getService() != nullptr) {
++    } else if (android::hardware::power::V1_0::IPower::tryGetService() != nullptr) {
+         ALOGI("Using power HAL");
+         gGetLowPowerStatsImpl = getPowerHalLowPowerData;
+         gGetPlatformLowPowerStatsImpl = getPowerHalPlatformData;
+diff --git a/services/core/jni/stats/PowerStatsPuller.cpp b/services/core/jni/stats/PowerStatsPuller.cpp
+index d8f6faac..7847a69a 100644
+--- a/services/core/jni/stats/PowerStatsPuller.cpp
++++ b/services/core/jni/stats/PowerStatsPuller.cpp
+@@ -55,7 +55,7 @@ static sp<PowerStatsPullerDeathRecipient> gDeathRecipient = new PowerStatsPuller
+ 
+ static bool getPowerStatsHalLocked() {
+     if (gPowerStatsHal == nullptr && gPowerStatsExist) {
+-        gPowerStatsHal = android::hardware::power::stats::V1_0::IPowerStats::getService();
++        gPowerStatsHal = android::hardware::power::stats::V1_0::IPowerStats::tryGetService();
+         if (gPowerStatsHal == nullptr) {
+             ALOGW("Couldn't load power.stats HAL service");
+             gPowerStatsExist = false;
+diff --git a/services/core/jni/stats/SubsystemSleepStatePuller.cpp b/services/core/jni/stats/SubsystemSleepStatePuller.cpp
+index 45afb5eb..94dbf637 100644
+--- a/services/core/jni/stats/SubsystemSleepStatePuller.cpp
++++ b/services/core/jni/stats/SubsystemSleepStatePuller.cpp
+@@ -153,7 +153,7 @@ static bool initializePowerStats() {
+ // The caller must be holding gPowerHalMutex.
+ static bool getPowerStatsHalLocked() {
+     if(gPowerStatsHalV1_0 == nullptr) {
+-        gPowerStatsHalV1_0 = android::hardware::power::stats::V1_0::IPowerStats::getService();
++        gPowerStatsHalV1_0 = android::hardware::power::stats::V1_0::IPowerStats::tryGetService();
+         if (gPowerStatsHalV1_0 == nullptr) {
+             ALOGE("Unable to get power.stats HAL service.");
+             return false;
+@@ -221,7 +221,7 @@ static AStatsManager_PullAtomCallbackReturn getIPowerStatsDataLocked(int32_t ato
+ // The caller must be holding gPowerHalMutex.
+ static bool getPowerHalLocked() {
+     if(gPowerHalV1_0 == nullptr) {
+-        gPowerHalV1_0 = android::hardware::power::V1_0::IPower::getService();
++        gPowerHalV1_0 = android::hardware::power::V1_0::IPower::tryGetService();
+         if(gPowerHalV1_0 == nullptr) {
+             ALOGE("Unable to get power HAL service.");
+             return false;
+@@ -335,10 +335,10 @@ getPullerLocked() {
+ 
+     // First see if power.stats HAL is available. Fall back to power HAL if
+     // power.stats HAL is unavailable.
+-    if(android::hardware::power::stats::V1_0::IPowerStats::getService() != nullptr) {
++    if(android::hardware::power::stats::V1_0::IPowerStats::tryGetService() != nullptr) {
+         ALOGI("Using power.stats HAL");
+         ret = getIPowerStatsDataLocked;
+-    } else if(android::hardware::power::V1_0::IPower::getService() != nullptr) {
++    } else if(android::hardware::power::V1_0::IPower::tryGetService() != nullptr) {
+         ALOGI("Using power HAL");
+         ret = getIPowerDataLocked;
+     }
+diff --git a/services/tests/uiservicestests/Android.bp b/services/tests/uiservicestests/Android.bp
+index 4439f998..651a04f4 100644
+--- a/services/tests/uiservicestests/Android.bp
++++ b/services/tests/uiservicestests/Android.bp
+@@ -60,3 +60,69 @@ android_test {
+         "netd_aidl_interface-cpp",
+     ],
+ }
++
++// Focused board UI-mode regression suite. Original full suite above is intact.
++//########################################################################
++// Build FrameworksUiServicesTests package
++//########################################################################
++
++android_test {
++    name: "Ga36UiModeManagerTests",
++
++    manifest: "AndroidManifest-ga36-uimode.xml",
++    // Retain the complete UiModeManagerServiceTest class plus its actual base.
++    srcs: [
++        "src/com/android/server/UiServiceTestCase.java",
++        "src/com/android/server/UiModeManagerServiceTest.java",
++    ],
++
++    static_libs: [
++        "services.accessibility",
++        "services.core",
++        "services.devicepolicy",
++        "services.net",
++        "services.usage",
++        "guava",
++        "androidx.test.rules", "hamcrest-library",
++        "mockito-target-inline-minus-junit4",
++        "platform-test-annotations",
++        "platformprotosnano",
++        "statsdprotolite",
++        "hamcrest-library",
++        "testables",
++        "truth-prebuilt",
++    ],
++
++    libs: [
++        "android.test.runner",
++        "android.test.base",
++        "android.test.mock",
++    ],
++
++    dxflags: ["--multi-dex"],
++
++    platform_apis: true,
++    test_suites: ["device-tests"],
++
++    certificate: "platform",
++
++    compile_multilib: "both",
++
++    // These are not normally accessible from apps so they must be explicitly included.
++    jni_libs: [
++        "libdexmakerjvmtiagent",
++        "libmultiplejvmtiagentsinterferenceagent",
++        "libbacktrace",
++        "libbase",
++        "libbinder",
++        "libc++",
++        "libcutils",
++        "liblog",
++        "liblzma",
++        "libnativehelper",
++        "libui",
++        "libunwindstack",
++        "libutils",
++        "netd_aidl_interface-cpp",
++    ],
++}
+diff --git a/services/tests/uiservicestests/src/com/android/server/UiModeManagerServiceTest.java b/services/tests/uiservicestests/src/com/android/server/UiModeManagerServiceTest.java
+index 45383000..4db1c0b0 100644
+--- a/services/tests/uiservicestests/src/com/android/server/UiModeManagerServiceTest.java
++++ b/services/tests/uiservicestests/src/com/android/server/UiModeManagerServiceTest.java
+@@ -163,6 +163,28 @@ public class UiModeManagerServiceTest extends UiServiceTestCase {
+         mService = mUiManagerService.getService();
+     }
+ 
++    @Test
++    public void ga36FixedDarkMode_rejectsLightAutomaticAndActivationOverrides()
++            throws RemoteException {
++        when(mResources.getBoolean(com.android.internal.R.bool.config_ga36ForceDarkMode))
++                .thenReturn(true);
++        mUiManagerService = new UiModeManagerService(mContext, true, mTwilightManager);
++        try {
++            mUiManagerService.onBootPhase(SystemService.PHASE_SYSTEM_SERVICES_READY);
++        } catch (SecurityException e) { /* configuration publication requires system permission */ }
++        mService = mUiManagerService.getService();
++        assertTrue(mService.isNightModeLocked());
++        assertTrue(mUiManagerService.getConfiguration().isNightModeActive());
++        for (int mode : new int[] {MODE_NIGHT_NO, MODE_NIGHT_AUTO, MODE_NIGHT_CUSTOM}) {
++            mService.setNightMode(mode);
++            assertEquals(MODE_NIGHT_YES, mService.getNightMode());
++            assertTrue(mUiManagerService.getConfiguration().isNightModeActive());
++        }
++        assertFalse(mService.setNightModeActivated(false));
++        assertTrue(mService.setNightModeActivated(true));
++        assertTrue(mUiManagerService.getConfiguration().isNightModeActive());
++    }
++
+     private <T> void addLocalService(Class<T> clazz, T service) {
+         LocalServices.removeServiceForTest(clazz);
+         LocalServices.addService(clazz, service);

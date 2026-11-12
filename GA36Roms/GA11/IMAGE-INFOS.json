@@ -1,0 +1,15 @@
+{
+  "version": "Alpha V1 \u00b7 P39 Clean",
+  "os": "11",
+  "file": "GA11-Clean-P39.img.gz",
+  "compressed_sha256": "450dae8768353bab295dad440922f5afbb93cc5ac61e2d475b8326944932eca3",
+  "image_sha256": "8b94bffb2424c23fdabe3b5c0a552e7a45e85b1e828187386415ecf3c943563a",
+  "header_sha256": "4d61ca34fb1ec776d02643bdd53ccc7390f46d2a857351d415d8bd99f88b302f",
+  "image_bytes": 31138512896,
+  "board": "GA36 Allwinner A33,512MB RAM",
+  "layout": "GA36-clean-v2",
+  "zram_mib": 256,
+  "sd_swap_gib": 4,
+  "not_for_flashing": true,
+  "hardware_acceptance": "failed: user reports separate images do not boot; working dual-boot layout is the next clean candidate"
+}

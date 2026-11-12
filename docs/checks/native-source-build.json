@@ -1,0 +1,8 @@
+{
+  "Zig": "0.13.0",
+  "source_build": "passed",
+  "ARM_emulated_init7_selftest": "passed",
+  "ARM_emulated_init11_selftest": "passed",
+  "ARM_emulated_growth_helper_selftest": "passed",
+  "hardware_exercised": false
+}

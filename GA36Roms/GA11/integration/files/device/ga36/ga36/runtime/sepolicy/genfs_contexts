@@ -1,0 +1,4 @@
+genfscon sysfs /devices/virtual/disp/disp/attr/lcdbl u:object_r:sysfs_ga36_lcdbl:s0
+genfscon sysfs /devices/virtual/disp/disp/attr/lcdbl_sync u:object_r:sysfs_ga36_lcdbl:s0
+# Parent verified in device input logs; the PMIC registers all three supplies here.
+genfscon sysfs /devices/platform/axp22_board/axp22-supplyer.20/power_supply u:object_r:sysfs_batteryinfo:s0

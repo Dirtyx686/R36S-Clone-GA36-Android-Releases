@@ -1,0 +1,1731 @@
+{
+  "date": "2026-11-12",
+  "scope": "Linux flasher4.2 compact, clean English dual source and focused license evidence; local preparation only",
+  "reviewed_binary_assets": {
+    "src/launcher/app/res/drawable/icon.png": "8e0e747760a2d1ad03329083baf2dc40154633e74d0258cb79b5d92ad4c9a3fe",
+    "tools/flasher/screenshots/apks-de.png": "8f74e841c9a5bfd5555c9705c6ae2750ca57ceb8b3c5563ee5fe913a7430446d",
+    "tools/flasher/screenshots/logs-en.png": "f9b2153e3d9719a5de18e3477d33c9153f4ed7b819c863305ce11ac1592b664a",
+    "tools/flasher/screenshots/obb-de.png": "6f30b75719f040d33500c869f84902e97fd45270f46d869daabfc8c639869fa3",
+    "tools/flasher/screenshots/system-de.png": "a59719e7971a3038ddee9b6cd6ee93b07809122e5d7aea86401afe7c68127984",
+    "tools/flasher/src/assets/icon.ico": "738a367e694147a0ae8943b630c59ec48b6c51625407b91cf06acc722f84b357",
+    "tools/flasher/src/assets/icon.png": "a670e82e6a2317d45d0c450bc94da43b84f41315a15560cdab922b54a1256ba7",
+    "docs/licensing/LICENSES/GA7-embedded-NOTICE.html": "b6dcd00e74307e90e70dcc97d7832cfc6d3574390bd49396c96722633a1b5bad",
+    "docs/licensing/LICENSES/GA11-embedded-NOTICE.html": "67274fd2832c22ddb69110d200099be99767d9cf59da885bfc6ff179c7e51987",
+    "assets/photos/dualboot-menu-ga7.jpg": "bb58e6b6a400b496fe66e82a68803a8cf4336ad0f8f5920c287a9edcb4ce5e39",
+    "assets/photos/dualboot-menu-ga11.jpg": "708bd96b278643389d177dc2eff4e0cb306244bcbc5a5d43d9da57c809ae5935",
+    "assets/photos/ga11-boot-logo.jpg": "3f16da6446903edd313a4e8fa4165cce2e20456340d98dfde18076ba7d80a62a",
+    "assets/photos/ga11-about-tablet.jpg": "44bcd643d0531b996389a487a84b9e53dccab4c51fd4a4ddbfba3b03b6b0893d",
+    "assets/photos/power-menu.jpg": "b275b880e415d7da1cb6333d2e2de55ecc5346a02381ccfb2badfeaefceebd07",
+    "assets/photos/ga7-boot-logo.jpg": "c7f6bd2b2dda7520f00ef8396ba5004819fb89e4ccdcd6990c3f5a9bf051cb81",
+    "assets/photos/ga7-k11-about.jpg": "798195918493b136bd730340a3fc0909b06eae7952efe1adf25ddb0fef55b5fd",
+    "tools/flasher/screenshots/compact-image-en.png": "437998a9b70f05cff3df4cbb6e31b93ff2f0cd6a3af1af06057922cbcfe0cfbd",
+    "tools/flasher/screenshots/compact-image-de.png": "a2a15546e4d146c9b9deced0a8deae4a2654c884a2870607954d577f7a0175fb"
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 250,
+      "sha256": "9dcf0d9c40af87a11358b8b309915ac618d280f551d18ceb9ffd77de382bf77e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 1631,
+      "sha256": "fa39277deb7610e5583d10dfd44db21a7e4369667cfc832a07948fde88749a80"
+    },
+    {
+      "path": "GA36Roms/DualBoot/CLEAN-AUDIT.json",
+      "bytes": 1105,
+      "sha256": "bf619a7281ca3c3f8402d3ff812381c9436e15fedac2076149edc3f799b211a1"
+    },
+    {
+      "path": "GA36Roms/DualBoot/IMAGE-INFOS.json",
+      "bytes": 867,
+      "sha256": "2313cc62f315d892276da5eb968b2a273159a062f8ebe5eaaad86b7166629de0"
+    },
+    {
+      "path": "GA36Roms/DualBoot/README.md",
+      "bytes": 2709,
+      "sha256": "668d7bdab5ac2a18b3a2b2c976640ee96bb6f5d263cdcb1cb75c077abf91cc34"
+    },
+    {
+      "path": "GA36Roms/GA11/BUILD-CHECKS.json",
+      "bytes": 1922,
+      "sha256": "f66d12eb84fe9b261c5c212162faf0ec327bd31a955a6c01d0409421ea6bf14c"
+    },
+    {
+      "path": "GA36Roms/GA11/BUILDING.md",
+      "bytes": 1551,
+      "sha256": "a1782696038096f143c4187dce314005ee4ece2a410e14d0dbac3344de6feceb"
+    },
+    {
+      "path": "GA36Roms/GA11/IMAGE-INFOS.json",
+      "bytes": 658,
+      "sha256": "853cff5cf59b6ebff32b2f318fb4c4dcb83c81ca9770aa7888af64f076cb9d18"
+    },
+    {
+      "path": "GA36Roms/GA11/README.md",
+      "bytes": 1288,
+      "sha256": "5f76e36219bec98e27479f256a1a3150d4b083667ba4b35bcb96752e53b30c17"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/README.md",
+      "bytes": 1387,
+      "sha256": "6b82477726549bc0ba69ec239816c7142322440407b3bf75d31f012817232dbf"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/build/make/target/product/go_defaults_common.mk",
+      "bytes": 2561,
+      "sha256": "3a3febea47a5ddd51f2caad63d863cc1289f6ec56c43cdad5ac6b41dd50e5e4c"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/build/soong/java/proto.go",
+      "bytes": 4185,
+      "sha256": "864b4f64321155090692aa987285ef605550ddb487cf6e65ffb41be8807d062a"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/AndroidProducts.mk",
+      "bytes": 97,
+      "sha256": "309d16d0e7d36bca369ce3255d3f29e564d633f13b3ae264fb3d24ce4cccc2aa"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/BoardConfig.mk",
+      "bytes": 2817,
+      "sha256": "32517988ce19ed2c215aa96b3c2e802e9a2e00681729345134d727e8e69c5b2f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/components/launcher/Android.bp",
+      "bytes": 818,
+      "sha256": "f53eed2955659ba80bb1932d4f7414e22b1e794430fca799271098afc6567a63"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/components/memory/Android.bp",
+      "bytes": 176,
+      "sha256": "426609fed7e8628d7ec794cd34fd3b8d8e23793c4688d50e6fa996c14ab4f0a1"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/components/memory/ga36-memory.c",
+      "bytes": 10168,
+      "sha256": "fc814986529cc3487a65206057323c580fa33cc0ef61bb5d94e68f924eb94324"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/components/memory/integration-status.json",
+      "bytes": 575,
+      "sha256": "051fbfa6a17efd7fe25bfab12f7ffe7ff2820e406b523f0eb6d87cb976bd6508"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/device.mk",
+      "bytes": 5452,
+      "sha256": "8582fc244a01c958fc6ff40f1c44175efbbe69087a9c7ee080cb440a63de88a2"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/Android.bp",
+      "bytes": 1850,
+      "sha256": "23bdd05fae5724f5549498f718c406be4420fa872b86b690a33c1af2c85c3a6e"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/graphics.mk",
+      "bytes": 585,
+      "sha256": "755d13e14212f7a7eb3ca6699fcfc7da528a96dec85246c0e829097d9356278a"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/manifest-graphics.xml",
+      "bytes": 1163,
+      "sha256": "0a14ab8f222c2831971ed45178cc6d3a0fd1563278b5d5858abcc50e51986ae0"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/Android.bp",
+      "bytes": 721,
+      "sha256": "8408974442f2b0e66127b69a36e0c8012710c1bc2d15a798b6df0c3b902eea67"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/exports.map",
+      "bytes": 60,
+      "sha256": "569a030351315b208fb1c7e6e7ec2ba19d37551f5f9c327d48bcfdd682ca849e"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/lib/builtins/arm/aeabi_uldivmod.S",
+      "bytes": 990,
+      "sha256": "0573e36dfe45c2dcb73360232eb96695c54c2100e91bd390f2519152bb4cc1d7"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/lib/builtins/assembly.h",
+      "bytes": 5769,
+      "sha256": "e36b3db516387ca0e85e2782430f5928124b018a2bed49eaca7ce9ac42cd7b70"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/lib/builtins/int_endianness.h",
+      "bytes": 2915,
+      "sha256": "3214cb49b829d43fb71cec794d995f66cf57d45ff034f08df565aff325094c77"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/lib/builtins/int_lib.h",
+      "bytes": 3842,
+      "sha256": "dc07b444bdfff6d336569a098167d1fcde33bf273552bdfd419d850521ac30ef"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/lib/builtins/int_types.h",
+      "bytes": 3191,
+      "sha256": "a545fca142d7a7f101333f68cd88f121cdbc300204a70b421ddcdb556b323b9d"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/lib/builtins/int_util.h",
+      "bytes": 1346,
+      "sha256": "6afb257f6b3edb7a2d25b1affa4d4dacd67258017f6fdd726b96d148c6405081"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/lib/builtins/popcountsi2.c",
+      "bytes": 1191,
+      "sha256": "d77000e99bacea9d1a0af07dc2d7c5642d3d106a2b071289884cdc9d9b59d3ba"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/graphics/runtime-math/lib/builtins/udivmoddi4.c",
+      "bytes": 6645,
+      "sha256": "1d27a31f5e3c4cd1851daffed0791738892b2182322c04b7d94425ee0b0291ba"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/lineage_ga36.mk",
+      "bytes": 580,
+      "sha256": "a807534b244325fa138d80d550880e2e701dc12f7fba4fa65c7b08a4a8d0a842"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/overlay/frameworks/base/core/res/res/values/config.xml",
+      "bytes": 522,
+      "sha256": "1698f0f397cd6468099bcaea0a62493be1d6c8459282c18ed75c9b3ff82c25fa"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/overlay/frameworks/base/packages/SettingsProvider/res/values/defaults.xml",
+      "bytes": 260,
+      "sha256": "5fa627eeefd7d4b2640ed2926bb728966d7a8f82a6e3c8936231c8f0b7e20e84"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/permissions/privapp-permissions-ga36.xml",
+      "bytes": 565,
+      "sha256": "4cd13a5d995d67bc6df0c4036842b592e24d0cac7c13974e9fe2fe67c648c956"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/components/audio/Android.bp",
+      "bytes": 419,
+      "sha256": "e4ce2fbc4e0fbb557c09ec25662dad38f391b56ac94cc7ec021f3f52be63f30d"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/components/audio/audio-ga36.c",
+      "bytes": 14182,
+      "sha256": "644f7e7076cb6c9bbd6ed7f49c99c891540130b0c515b3fa61c48a0212642095"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/components/audio/audio_policy_configuration.xml",
+      "bytes": 1235,
+      "sha256": "69870ed99696bddb0206e852adcc404132e0e91d613b1224675562936167849b"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/components/audio/manifest-audio.xml",
+      "bytes": 534,
+      "sha256": "e2a47d789492d82ce61b148b9b2039f8efbccabc233b306f0f243a2c86eec3df"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/components/lights/Android.bp",
+      "bytes": 349,
+      "sha256": "c541fcd37febd37470881171131b1e1f97d535cac5e6dcf818b89266ed5d6934"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/components/lights/lights-ga36.c",
+      "bytes": 3820,
+      "sha256": "886691cc3a08c1b3f503d34d7824ebe6c091533ac5ce20aecd40ebd42f6dc765"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/ga36-bootlog.rc",
+      "bytes": 2172,
+      "sha256": "1724f775db87dfbbf22839d6099a29164b72b716ea6ee965c012d645ffc16509"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/ga36-console-hardware.xml",
+      "bytes": 5033,
+      "sha256": "5e0d578abf2df0877f1d5665476605303268a41d4283432d04f647a0c23f92e0"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/ga36-home-preferred.xml",
+      "bytes": 387,
+      "sha256": "04ad6c43a9746f2bfd3585a147a1f056718ea877257b5fec4c768e8fe2219a4f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/ga36-no-profiles.xml",
+      "bytes": 143,
+      "sha256": "1154691f9f0d3d9597642f241e2f9457582beb6d4346b5e426609593f938258c"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/init.ga36.rc",
+      "bytes": 2136,
+      "sha256": "9e974b67258ff71e39f794f9ec56273ae585154d48330ae167b9b80f2862e1b1"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/input/ga36-idc/GA36_UI_Pointer.idc",
+      "bytes": 81,
+      "sha256": "53db5b81db0638c7cee75c1c33389615e01a93a6aae0d506526700d2a4c27342"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/input/ga36-idc/axp22-supplyer.idc",
+      "bytes": 20,
+      "sha256": "42873853caf548405339cf426b8ef32a54563c1a5d3d52f97c959bf5773fd1ff"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/input/ga36-idc/micro_gamepad.idc",
+      "bytes": 81,
+      "sha256": "53db5b81db0638c7cee75c1c33389615e01a93a6aae0d506526700d2a4c27342"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/input/ga36-idc/udt_keyboard.idc",
+      "bytes": 81,
+      "sha256": "53db5b81db0638c7cee75c1c33389615e01a93a6aae0d506526700d2a4c27342"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/input/ga36-keylayout/axp22-supplyer.kl",
+      "bytes": 14,
+      "sha256": "db011ac08ec170390f9e9c9cbfd13cb4f73f8e7bd9cdd9a3f6bf08f706a17d14"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/input/ga36-keylayout/micro_gamepad.kl",
+      "bytes": 1103,
+      "sha256": "530622bedb61bd177d8f0b8133424d1619c6cfbf5b1a30368278075ccc3a0b7f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/input/ga36-keylayout/sunxi-keyboard.kl",
+      "bytes": 112,
+      "sha256": "fc19ae5e7bf6d3e40c97b21d716cab4fef46d675a64cb12c352d1123176b0593"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/input/ga36-keylayout/udt_keyboard.kl",
+      "bytes": 76,
+      "sha256": "cd83c48e31d93f53fd3bbfee6258c5236e007a154cb0395e98bafb503d38fe40"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/manifest-keymaster.xml",
+      "bytes": 718,
+      "sha256": "b415ef3b9e0cece91e1833ff4f2e8834bf977f19ff942a7c796ea7a94361bcb1"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/manifest-media.xml",
+      "bytes": 517,
+      "sha256": "5fa9bbd5420f17e07c7c1aba1f6f6b5bd7922182797689cf3f2c17a87ca0cc2a"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/manifest-recents-only.xml",
+      "bytes": 2808,
+      "sha256": "573703c55d70977866146a980c3c9bf8215073e4055b19abf188491d6d5fc25a"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/file_contexts",
+      "bytes": 1081,
+      "sha256": "32a5d3c09f975e08be078ada84d8bccd876aa8e14c0e04994f9780838d1f7b6f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/ga36_bootlog.te",
+      "bytes": 875,
+      "sha256": "f15d702328e9113e01b5402d2240f0edc72b9c25bbacffbe801558336a5da479"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/ga36_cgroup.te",
+      "bytes": 119,
+      "sha256": "a21647ab4e3889d54b5228bdebfc366147992f1be82e7d1aa4ebe93e1f0ca734"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/ga36_codec_config.te",
+      "bytes": 466,
+      "sha256": "3ad8154ffdbe783c60e5d921ec2ec6cb8b66615eec2d3a2db68af01602d6eec0"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/ga36_graphics.te",
+      "bytes": 589,
+      "sha256": "d902ffc4a815fa5bb0a332a2f7d90a4c77cf82321c4801bdede0fa7dd5cd1df4"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/ga36_image_backing.te",
+      "bytes": 1342,
+      "sha256": "22f4ba00e2b256b7b5a79b88ee7c569e220b53973d516887bc857427f711c87c"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/ga36_light.te",
+      "bytes": 406,
+      "sha256": "117f51d04ed7fa8aee47268e90321c3be1235f37f3a4dd6f00d2a474379c8f66"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/ga36_pointer.te",
+      "bytes": 686,
+      "sha256": "457667fa2751d0d1488f4cda009a93dde60a395388e425977d2ce20e2fb70cea"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/sepolicy/genfs_contexts",
+      "bytes": 365,
+      "sha256": "d1cc8a6e079c36d5de113171018873b756e2212fcf95e8567de7183e2cd842d7"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/device/ga36/ga36/runtime/ueventd.ga36.rc",
+      "bytes": 313,
+      "sha256": "504a284b1c2825367789bb2cb80e54c1c9b255e5772d0ed0f49cf5eb401d7c4f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/av/media/libstagefright/MediaCodecList.cpp",
+      "bytes": 12568,
+      "sha256": "d5885cc0acc673e884a7069a9b3b6afb282d6d27015f984b9f1cd5d98905c033"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/av/media/libstagefright/colorconversion/SoftwareRenderer.cpp",
+      "bytes": 18866,
+      "sha256": "6543521b7b7944f09e0cdb980cd39f23dc69740dcced9b5af49468fa47f069e4"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/av/media/libstagefright/colorconversion/ga36_yv12_legacy.h",
+      "bytes": 1487,
+      "sha256": "a884feaa4d2759f1b148195127044077186b7583823ecd681f3ee7bc65882986"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/Android.bp",
+      "bytes": 38692,
+      "sha256": "dfe519baa5eb8a86c4038c7de981dffae61febf5d1b10ffb85914193f75dfa3f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/apex/jobscheduler/service/java/com/android/server/usage/AppStandbyController.java",
+      "bytes": 109261,
+      "sha256": "47e942f4f9b5442c8d196aac6a9e510008fcb887019fe54d6f5b512e4dcc2b31"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/core/res/res/values/config.xml",
+      "bytes": 242196,
+      "sha256": "8785881d87a26b97e2640556d91b2f0c649495067522328c6c882135bf3e87a0"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/core/res/res/values/symbols.xml",
+      "bytes": 240767,
+      "sha256": "a3e8287b990ab363e59d874b4c12e3962c6c5a12f098dbd834ffb5e40ef4a5f5"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SettingsLib/src/com/android/settingslib/wifi/WifiStatusTracker.java",
+      "bytes": 12414,
+      "sha256": "df393f6e73af2103feef991bd11964a1b092408cf7ed0353de610f129f1a62ed"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SystemUI/src/com/android/keyguard/CarrierTextController.java",
+      "bytes": 29113,
+      "sha256": "f5085ffb39c4b0906c4d34a88e428abd43b5b2cc4c0f7fc4f1980ba9fa10362c"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SystemUI/src/com/android/systemui/dagger/SystemServicesModule.java",
+      "bytes": 10079,
+      "sha256": "4ae2c1bddadcbd6b924c162ad4c0fff3219a1487032627752f7d12e9235781cb"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SystemUI/src/com/android/systemui/keyguard/KeyguardViewMediator.java",
+      "bytes": 100174,
+      "sha256": "49c0ae49f8ade7dd1a7503ead5d715a3ccd1195ddc406bcee184e14e41cee220"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SystemUI/src/com/android/systemui/media/MediaDeviceManager.kt",
+      "bytes": 7411,
+      "sha256": "1c4310684bb52365fe50949a83fef639beef96d584cf8701d08a3d4d817d7783"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SystemUI/src/com/android/systemui/media/dialog/MediaOutputDialogFactory.kt",
+      "bytes": 2378,
+      "sha256": "4a3b7c07cece8e26a6272c7fd6267dd547ec4fe4ba1311ceb9c730b21cebc34f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkControllerImpl.java",
+      "bytes": 54925,
+      "sha256": "d4d96791460206c8a12aba7e030f8c244d6e6f75edfb127cc182871128abdf51"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SystemUI/src/com/android/systemui/theme/ThemeOverlayController.java",
+      "bytes": 7630,
+      "sha256": "32f47e05fed29ee9a6facc07ddff2658b684e4e24db5a2939cc5e5ef433122f6"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/packages/SystemUI/tests/src/com/android/systemui/media/MediaDeviceManagerTest.kt",
+      "bytes": 14420,
+      "sha256": "d3896fc7247a7aeb65705d3fff440a0646d0ab95362377ec7a6be74ada2c1a09"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/core/java/com/android/server/UiModeManagerService.java",
+      "bytes": 69256,
+      "sha256": "e006136fa63631e3dbe12146b28554ff853508c33edc1cda985688939bdd61d2"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/core/java/com/android/server/am/ActivityManagerConstants.java",
+      "bytes": 43583,
+      "sha256": "bdfa067623f0596f0b912e856e22a7959b5be3b03a407794c02b179026fe2af9"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/core/java/com/android/server/policy/PhoneWindowManager.java",
+      "bytes": 284843,
+      "sha256": "dd7ccc813c53608d2a4ce014a5f25c0aa16367a2d52d2e1d28ba5fd60b9bdfd0"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/core/java/com/android/server/stats/pull/StatsPullAtomService.java",
+      "bytes": 176555,
+      "sha256": "67aa3ca832a63bcfcd14ea85c8414266821ffa201dd0e042826f7b2f4f9b653b"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/core/jni/com_android_server_am_BatteryStatsService.cpp",
+      "bytes": 36853,
+      "sha256": "03befa903ae892888fbe3f467a9931b2fa713bcfd52c831ffc81b7febd02a831"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/core/jni/stats/PowerStatsPuller.cpp",
+      "bytes": 7522,
+      "sha256": "ca3e2a18096598d02b89d96026984504a3b4eedfeb1ef2d58911b9f5865c29ff"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/core/jni/stats/SubsystemSleepStatePuller.cpp",
+      "bytes": 15481,
+      "sha256": "d0d3073367fbe2e117c9c7425269c9e4936fb3ecb34c87ac8e7bb5e133521472"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/tests/uiservicestests/Android.bp",
+      "bytes": 3274,
+      "sha256": "b194f3ecd31c410fcff5796a1fb624b24d3dd44dced39ca970483097ef4b7294"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/tests/uiservicestests/AndroidManifest-ga36-uimode.xml",
+      "bytes": 2516,
+      "sha256": "a884caa58b9b510cf76c27eccb614fe7f9ef3ba97e7062d83e00fc0170cbf81f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/base/services/tests/uiservicestests/src/com/android/server/UiModeManagerServiceTest.java",
+      "bytes": 20021,
+      "sha256": "32a7acfe6cd4857cf8084f4a4ddebadfb5e8c6a6a4c2d08748f4d7668b256188"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/native/libs/ui/GraphicBufferAllocator.cpp",
+      "bytes": 8887,
+      "sha256": "cef3867f0f76d336ce0f81f12fc491a4fa59d62a89854ac6d2b4b069e9b7a6df"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/native/libs/ui/GraphicBufferMapper.cpp",
+      "bytes": 16683,
+      "sha256": "f9cdf958710541e881b10d82a6d4b7bcccabc78c2e6012d9debd13c19a35d438"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/native/opengl/libs/EGL/egl_platform_entries.cpp",
+      "bytes": 110968,
+      "sha256": "24475e1d9fd44f27f6892798265ad83531dc01ab72c30b5cd6c4d1b88862bb83"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/native/services/inputflinger/dispatcher/InputDispatcher.cpp",
+      "bytes": 228764,
+      "sha256": "02051e5db67f401493c32cc1ae3610886e7d35cb742a27ae4aa8bd47f40e6003"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/native/services/inputflinger/reader/EventHub.cpp",
+      "bytes": 73184,
+      "sha256": "d37b07a6e8bb1e3a9aa125f5498796ea4da41a5a3a3498d704e6ad57f5713262"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/native/services/inputflinger/reader/mapper/JoystickInputMapper.cpp",
+      "bytes": 18416,
+      "sha256": "a107f10c90bb3fe681efc5accf73f523dede16f66656adfcb3bfc890f645e782"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/native/services/inputflinger/reader/mapper/KeyboardInputMapper.cpp",
+      "bytes": 17365,
+      "sha256": "3532e7ccbb080c302a23c1ed8f8101a1a79715c7f1f7530f8bf0fa9951acdbda"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/frameworks/native/services/surfaceflinger/BufferLayer.cpp",
+      "bytes": 32951,
+      "sha256": "840a7200d26556646b70817e467aec774e666e1697c67fda14a0532876f81241"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/hardware/interfaces/graphics/allocator/2.0/utils/passthrough/include/allocator-passthrough/2.0/Gralloc0Hal.h",
+      "bytes": 5797,
+      "sha256": "3609dd7e1558005b5ec0be071318e851c17e88dcfecf801d9a0f8f4ecec04f10"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/hardware/interfaces/graphics/composer/2.1/utils/hwc2onfbadapter/HWC2OnFbAdapter.cpp",
+      "bytes": 31705,
+      "sha256": "d88f262009160410ac13745563a3fc8ce2fac45e0181a62a670e40dc4eafaa73"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/hardware/interfaces/graphics/mapper/2.0/utils/passthrough/include/mapper-passthrough/2.0/Gralloc0Hal.h",
+      "bytes": 7846,
+      "sha256": "4c4fef5e948b483d03aedd25e8d76c148c9f8bfa8a75838628a44c87d9b457ee"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/res/layout/settings_homepage_container.xml",
+      "bytes": 2705,
+      "sha256": "9fb93bf28af94ff2e7af7a5ce15cb5650c2a5a779b941bdb60f93f19cef452bb"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/res/xml/system_dashboard_fragment.xml",
+      "bytes": 3946,
+      "sha256": "a3e2920b4652be8e860aaa668f29ea23655d6ab15b6a3ffd5942c7c52b34ffcf"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/res/xml/top_level_settings.xml",
+      "bytes": 6835,
+      "sha256": "e2bec563f8fcb168924dd4fdc34d41544e47861e393e32c20f6e1f0e1436d3b2"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/src/com/android/settings/development/WifiScanThrottlingPreferenceController.java",
+      "bytes": 2526,
+      "sha256": "636b544797d74c314a5c7230e358583c3ce849edefd145d6d15c6d685e8e03ea"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/src/com/android/settings/development/WifiVerboseLoggingPreferenceController.java",
+      "bytes": 2775,
+      "sha256": "bb718bb21e88cce6ef028a1e4059af1e02ff2694330eac0b1dfb8f11d446b550"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/src/com/android/settings/deviceinfo/DeviceNamePreferenceController.java",
+      "bytes": 7130,
+      "sha256": "d17072f65dc35b1b2d0baf71f331d9c63fce8f0c1b7b73b102488e3e7b3ea877"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/src/com/android/settings/deviceinfo/WifiMacAddressPreferenceController.java",
+      "bytes": 1808,
+      "sha256": "bd90c3fe9efd973490281005859ec82b19a752ddd5d0dc21641238ee51471a29"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/src/com/android/settings/homepage/SettingsHomepageActivity.java",
+      "bytes": 4853,
+      "sha256": "7bd0adcf640992fec59f9500287ebf64acb637a1b3c3dac0f6e0e570739084e0"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/src/com/android/settings/wifi/WifiMasterSwitchPreferenceController.java",
+      "bytes": 3801,
+      "sha256": "ff9962b3061be649179b7e3863b42c8110ec1c8e48e797f98c2eaa2f91d9abe6"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Settings/src/com/android/settings/wifi/WifiSummaryUpdater.java",
+      "bytes": 3961,
+      "sha256": "5afba39e506160017231424fd5df87e91d7a0411df7331eb48879af9eae14188"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Trebuchet/Android.mk",
+      "bytes": 7923,
+      "sha256": "46e570dac69dabf176730d4fbeb4ddbd7b545b7b7ae4f8b02d7ddfe4f7a25dd3"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Trebuchet/quickstep/src/com/android/quickstep/OverviewComponentObserver.java",
+      "bytes": 11081,
+      "sha256": "8c1c951d3117228d46a529e0afca33bfa54c7b0da658eed768177c3eb4e0e166"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/apps/Trebuchet/src/com/android/launcher3/widget/WidgetManagerHelper.java",
+      "bytes": 6649,
+      "sha256": "3df6e1187ac778c35007825df5a3292cb91c1af51a97fb3487fc1bf241ba36e1"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/packages/inputmethods/LatinIME/java/Android.bp",
+      "bytes": 1403,
+      "sha256": "e3753bd27c0581dedf7a1e5e409b02543903218a3e9f004567899566da5b912e"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/system/core/init/selinux.cpp",
+      "bytes": 28316,
+      "sha256": "8cbf56d970562528f60905edbb4a35a949385e470afbf9ce5eef84b9598d1e67"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/system/core/libprocessgroup/profiles/cgroups.json",
+      "bytes": 526,
+      "sha256": "c5399da1030149158a5489540d66e90bc174fce1ca334d4dfed69aa527a3a322"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/system/core/libprocessgroup/profiles/task_profiles.json",
+      "bytes": 9021,
+      "sha256": "b5c0a3b4d1ab3674ff1892a0bc6f61596090605d75de49d198f61fd252e294e4"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/system/core/rootdir/init.rc",
+      "bytes": 42811,
+      "sha256": "6b9af6dd233ef30ed5f14a04980ad0b6e9a9c51e8f6fbba6c1489cd976a66386"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/system/core/toolbox/Android.bp",
+      "bytes": 1242,
+      "sha256": "d2bc0a82c75ff0fdf8a51320d7db79fc9c8fe1c38028b3d0b4f45899b205e41e"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/system/core/toolbox/getevent.c",
+      "bytes": 23909,
+      "sha256": "3fac8315a41461b72a67236a893fa521893b174c6fd1e8272a9dcb4cfc13abcf"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/system/libhidl/transport/ServiceManagement.cpp",
+      "bytes": 32108,
+      "sha256": "bb5f2b7e4edd98d3da5fefe21c239396d41e8d3acec2122a19ccb804b7221e95"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/system/vold/Utils.cpp",
+      "bytes": 54477,
+      "sha256": "da3b509852b4652d9e45d82b618aec9b1e5be1a1c48877060234c56a999c08ca"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/files/vendor/lineage/config/lineage_sdk_common.mk",
+      "bytes": 2356,
+      "sha256": "d7ad2bb012047546f7ccdf9701765499be35f3967f772ea171bfb59fc1fc6240"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/build__make.patch",
+      "bytes": 793,
+      "sha256": "b584a724afd2969ed2d9c4144b47e8e810b4c6cc76d8271d8cf63089b92657cd"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/build__soong.patch",
+      "bytes": 669,
+      "sha256": "706b427276596fc700068f43ca497b9604e04ef77ff4c27e1a0c45c113b9885f"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/frameworks__av.patch",
+      "bytes": 3702,
+      "sha256": "609723447937a663d7eabe75a1dc66db1ec0893684c1c9b68eeab73f0013f4d6"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/frameworks__base.patch",
+      "bytes": 30814,
+      "sha256": "3212add1c9841494085b6b8c0409491ba53b87e5b68528b0caa660a9b63d1df4"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/frameworks__native.patch",
+      "bytes": 20461,
+      "sha256": "3fd6c28da25a3d24aab86a89563dacd1f7c69b702dc3fad98a0e2a92a94ae104"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/hardware__interfaces.patch",
+      "bytes": 6780,
+      "sha256": "61837991ec8e7f53f0e035d7ea20e5262dffbcdce1d8e01a64850489aa176f05"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/packages__apps__Settings.patch",
+      "bytes": 14360,
+      "sha256": "21c7c2170b58e8b6ecd0203705b6700f212726318bbb89e4b512a783fa8bfee5"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/packages__apps__Trebuchet.patch",
+      "bytes": 5929,
+      "sha256": "f99fbd8dbc6bd0d605f30ca413468de6215d82b8d15744d3426f240166d79e5e"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/packages__inputmethods__LatinIME.patch",
+      "bytes": 652,
+      "sha256": "5652a5c666663b6d73a6797832d440be9605623ec8344c827a18ac3d57312a50"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/system__core.patch",
+      "bytes": 24158,
+      "sha256": "dcfbd807d23a2803e799dc8aeea164fa3f983739af763db2601800a3b5dfbf57"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/system__libhidl.patch",
+      "bytes": 1315,
+      "sha256": "2e2631e3a085277d313a866613427e4cc7a1925c9a771d6d07fddaad51cdf8c3"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/system__vold.patch",
+      "bytes": 1247,
+      "sha256": "532bcf2a7be35bce519a8f44feea168eda4c7aeb1b323c9fb8868a9aa0921e09"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/patches/vendor__lineage.patch",
+      "bytes": 1643,
+      "sha256": "583b7392b42a3dde083031ac623ea53136c363887507f1dbf09f02a4a0e7cb7c"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/pinned.xml",
+      "bytes": 211446,
+      "sha256": "af3c98da25b82986e52a22eb7b3012b280693709139c3d847e926ee0f0001847"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/projects.json",
+      "bytes": 163743,
+      "sha256": "5a19ec21855727df412b3f9c2d102485b7b26378b7739219c86aae5b1f51cdf1"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/frameworks/av/NOTICE",
+      "bytes": 17680,
+      "sha256": "5f28c11f8b1b3f97b9d42c74b85371ebf4127f241b799279bcecd69f7ee542dc"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/frameworks/base/NOTICE",
+      "bytes": 18182,
+      "sha256": "cf4dd7cea5b6bcd2622ddd3529b3c74d16ba2b4db444575bc6f5c33f8a960530"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/frameworks/native/NOTICE",
+      "bytes": 17680,
+      "sha256": "5f28c11f8b1b3f97b9d42c74b85371ebf4127f241b799279bcecd69f7ee542dc"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/hardware/interfaces/NOTICE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/packages/apps/Settings/NOTICE",
+      "bytes": 10695,
+      "sha256": "38751245389e1e23f73e6f5384b5cbe7fa972cc4410c5adc9c04b082a0b9561a"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/packages/apps/Trebuchet/NOTICE",
+      "bytes": 10695,
+      "sha256": "38751245389e1e23f73e6f5384b5cbe7fa972cc4410c5adc9c04b082a0b9561a"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/packages/inputmethods/LatinIME/NOTICE",
+      "bytes": 10752,
+      "sha256": "d04394c729fc9fda050d5733d8ee11663fb54fe54d94532de968cf85c1cc42fb"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/system/core/NOTICE",
+      "bytes": 17680,
+      "sha256": "5f28c11f8b1b3f97b9d42c74b85371ebf4127f241b799279bcecd69f7ee542dc"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/system/libhidl/NOTICE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "GA36Roms/GA11/integration/upstream-notices/vendor/lineage/LICENSE",
+      "bytes": 640,
+      "sha256": "6686cda24fdf8158112cea8bcea0ff7254696b09547374cc77c6f74d26744b46"
+    },
+    {
+      "path": "GA36Roms/GA11/manifests/pinned.xml",
+      "bytes": 211446,
+      "sha256": "af3c98da25b82986e52a22eb7b3012b280693709139c3d847e926ee0f0001847"
+    },
+    {
+      "path": "GA36Roms/GA7/BUILD-CHECKS.json",
+      "bytes": 1840,
+      "sha256": "12c254f358ba1938e3f488742a8decf6fa52fa76a6bb1d985faecf19f670cac3"
+    },
+    {
+      "path": "GA36Roms/GA7/IMAGE-INFOS.json",
+      "bytes": 655,
+      "sha256": "2820db7a8af6936e4bc00bb8f84f26e75335c4d728d89505a1f162f26584d94e"
+    },
+    {
+      "path": "GA36Roms/GA7/README.md",
+      "bytes": 1284,
+      "sha256": "dcd20de3a13a27fb71fdc7fc074412431c1beccbb81de6074d6fc8f70e994e19"
+    },
+    {
+      "path": "GA36Roms/README.md",
+      "bytes": 485,
+      "sha256": "b08d1478eb6e5cee291fd4cc4bc6ca87740f2750e3e3d07ac5e61a4a5c9bf5c8"
+    },
+    {
+      "path": "GA36Roms/shared/layout.json",
+      "bytes": 761,
+      "sha256": "d7dd859ba151f966a92c3f9ef32fcf95a623c74dffd5488507ba7f095a1150f1"
+    },
+    {
+      "path": "KNOWN-ISSUES.md",
+      "bytes": 911,
+      "sha256": "e6cad6cea943414240b748b11baac64554f2eef7a43cb9898791c4994661c081"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1069,
+      "sha256": "0ccc61179affdfeecb5b55695914fa6dce18899cfaf744fb9681a2322e450b6b"
+    },
+    {
+      "path": "NOTICE.md",
+      "bytes": 1201,
+      "sha256": "9e00bf8b0b7265da1625ee6efe8bb264f2f219649865d4261356592a9e4091dc"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4545,
+      "sha256": "76f0f73fdc45e9ef0945615f924459388c6ef1553935899d154f90762038ca3a"
+    },
+    {
+      "path": "RELEASE-INDEX.json",
+      "bytes": 2742,
+      "sha256": "acf59c44fcf2898c6f61987d4948c4698c417d9e08cc22005d7789a5eab46c35"
+    },
+    {
+      "path": "assets/photos/README.md",
+      "bytes": 1005,
+      "sha256": "2e568d66920335124fcd36ba3a2f32dade2cb1369240ef86e6c9579550fd1655"
+    },
+    {
+      "path": "assets/photos/dualboot-menu-ga11.jpg",
+      "bytes": 1957251,
+      "sha256": "708bd96b278643389d177dc2eff4e0cb306244bcbc5a5d43d9da57c809ae5935"
+    },
+    {
+      "path": "assets/photos/dualboot-menu-ga7.jpg",
+      "bytes": 1836970,
+      "sha256": "bb58e6b6a400b496fe66e82a68803a8cf4336ad0f8f5920c287a9edcb4ce5e39"
+    },
+    {
+      "path": "assets/photos/ga11-about-tablet.jpg",
+      "bytes": 2003842,
+      "sha256": "44bcd643d0531b996389a487a84b9e53dccab4c51fd4a4ddbfba3b03b6b0893d"
+    },
+    {
+      "path": "assets/photos/ga11-boot-logo.jpg",
+      "bytes": 1696301,
+      "sha256": "3f16da6446903edd313a4e8fa4165cce2e20456340d98dfde18076ba7d80a62a"
+    },
+    {
+      "path": "assets/photos/ga7-boot-logo.jpg",
+      "bytes": 1863805,
+      "sha256": "c7f6bd2b2dda7520f00ef8396ba5004819fb89e4ccdcd6990c3f5a9bf051cb81"
+    },
+    {
+      "path": "assets/photos/ga7-k11-about.jpg",
+      "bytes": 1829590,
+      "sha256": "798195918493b136bd730340a3fc0909b06eae7952efe1adf25ddb0fef55b5fd"
+    },
+    {
+      "path": "assets/photos/power-menu.jpg",
+      "bytes": 1947408,
+      "sha256": "b275b880e415d7da1cb6333d2e2de55ecc5346a02381ccfb2badfeaefceebd07"
+    },
+    {
+      "path": "docs/checks/linux-flasher.json",
+      "bytes": 484,
+      "sha256": "cb82e17747662bb4bd4bdbff3bfd9b27656b68a2f3af0fe18468d7d7481f2cff"
+    },
+    {
+      "path": "docs/checks/native-source-build.json",
+      "bytes": 219,
+      "sha256": "66d0e1a2c007df25749d9b2e365fa492f9dfafd1a7af07170739ef3a2bbefd4e"
+    },
+    {
+      "path": "docs/licensing/ADDITIONAL-SOURCE-SEARCHES.json",
+      "bytes": 2268,
+      "sha256": "28babed7c38408192db10217d58259d01fd833d785a7d0b94b0c0acea658b22c"
+    },
+    {
+      "path": "docs/licensing/BINARY-PROVENANCE.csv",
+      "bytes": 119133,
+      "sha256": "5b14d3e26273eccb066a9017efbdfe4439b39d714b11c8809aabb09188c73e11"
+    },
+    {
+      "path": "docs/licensing/BINARY-PROVENANCE.json",
+      "bytes": 260234,
+      "sha256": "6cd4acf58fff469aa494c7de82f63989427eeb49b2301eeacb9700208fee843e"
+    },
+    {
+      "path": "docs/licensing/DONOR-TREE-CHECKS.json",
+      "bytes": 495,
+      "sha256": "20fc73cf3cca3b33caaca2ea916883023202a54220bddadbc5dc4e39a0d23b2a"
+    },
+    {
+      "path": "docs/licensing/FOLLOWUP-20261112.json",
+      "bytes": 1567,
+      "sha256": "2214e5559adcba2c860a2689cebbc6dfd61aff1029548b02ef3871adf570e25c"
+    },
+    {
+      "path": "docs/licensing/FOLLOWUP-20261112.md",
+      "bytes": 5263,
+      "sha256": "cb5cb303821877fe7443b522961c9607fc30f9b5a313d66a80fb0fe5b7dec42e"
+    },
+    {
+      "path": "docs/licensing/GA7-SDK-ORIGIN.json",
+      "bytes": 305,
+      "sha256": "2497178592eb51f9fda1d3fcc40ca3fe902354cc8be24f894595b72668c5f64a"
+    },
+    {
+      "path": "docs/licensing/GA7-SDK-PACKAGE.xml",
+      "bytes": 797,
+      "sha256": "c37b310eb74eccc54b52e45dcb3fbb561cb592bb2be3a88e49453cffd6962569"
+    },
+    {
+      "path": "docs/licensing/KERNEL-SOURCE-VERIFICATION.json",
+      "bytes": 291,
+      "sha256": "dc90c5026cf8a548c28f43760f01da504acdb6292607dc441607a8f37c1e50b5"
+    },
+    {
+      "path": "docs/licensing/LICENSES/Amaze-GPL-3.0.txt",
+      "bytes": 35146,
+      "sha256": "c53a65c2fd561c87eaabf1072ef5dcab8653042bc15308465f52413585eb6271"
+    },
+    {
+      "path": "docs/licensing/LICENSES/Flasher-font-notices.txt",
+      "bytes": 2076,
+      "sha256": "d6181549dabdd2af5f97528b5d719d5b256c194900336b6a73fdf40a8935089f"
+    },
+    {
+      "path": "docs/licensing/LICENSES/GA11-embedded-NOTICE.html",
+      "bytes": 2297162,
+      "sha256": "67274fd2832c22ddb69110d200099be99767d9cf59da885bfc6ff179c7e51987"
+    },
+    {
+      "path": "docs/licensing/LICENSES/GA36-original-code-MIT.txt",
+      "bytes": 1069,
+      "sha256": "0ccc61179affdfeecb5b55695914fa6dce18899cfaf744fb9681a2322e450b6b"
+    },
+    {
+      "path": "docs/licensing/LICENSES/GA7-embedded-NOTICE.html",
+      "bytes": 1757037,
+      "sha256": "b6dcd00e74307e90e70dcc97d7832cfc6d3574390bd49396c96722633a1b5bad"
+    },
+    {
+      "path": "docs/licensing/LICENSES/GA7-original-SDK-license.txt",
+      "bytes": 16962,
+      "sha256": "1f8729233617b193fd619213792ae16a41b95d2bbbf525dfe66998252ba68b16"
+    },
+    {
+      "path": "docs/licensing/LICENSES/Go-LICENSE.txt",
+      "bytes": 1453,
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+    },
+    {
+      "path": "docs/licensing/LICENSES/Linux-3.4-COPYING.txt",
+      "bytes": 18693,
+      "sha256": "af8067302947c01fd9eee72befa54c7e3ef8a48fecde7fd71277f2290b2bf0f7"
+    },
+    {
+      "path": "docs/licensing/LICENSES/Mali-kernel-GPL-header.txt",
+      "bytes": 838,
+      "sha256": "3654f826f6ef649517f4af71fe57a2010903ef382ebf4ded0a8a2b2bc1db1f48"
+    },
+    {
+      "path": "docs/licensing/LICENSES/compiler-rt-LICENSE.txt",
+      "bytes": 4289,
+      "sha256": "415ec2b15961f8b34859a50af386663f552bb62b9fffd69e8eb676c792ea022e"
+    },
+    {
+      "path": "docs/licensing/LICENSES/e2fsprogs-NOTICE.txt",
+      "bytes": 44585,
+      "sha256": "5da5ef153e559c1d990d4c3eedbedd4442db892d37eae1f35fff069de8ec9020"
+    },
+    {
+      "path": "docs/licensing/LICENSES/musl-COPYRIGHT.txt",
+      "bytes": 6204,
+      "sha256": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af"
+    },
+    {
+      "path": "docs/licensing/NOTICE-FILES.json",
+      "bytes": 2276,
+      "sha256": "3ee1e72c5d8af06e3c78030006042b61e592c9a44526e070ad4fb38deb5f6c90"
+    },
+    {
+      "path": "docs/licensing/README.md",
+      "bytes": 6000,
+      "sha256": "c5d8dbb776e694997f85dff0c651953c30660e0fc2e94a2adb7cc43514b505fb"
+    },
+    {
+      "path": "docs/licensing/RELEASE-VERIFICATION.json",
+      "bytes": 447,
+      "sha256": "97f2a2aecc89b6d84ea88172c87287b452484ad8707af11ea93ebe01d4102a98"
+    },
+    {
+      "path": "docs/licensing/RESEARCH-SOURCES.json",
+      "bytes": 3687,
+      "sha256": "99cec630ffee8e9c0061dcedf1f30beda942b2d5d1509d39fbe909ad0c6c74f7"
+    },
+    {
+      "path": "docs/licensing/UBOOT-COMMIT-SEARCH.json",
+      "bytes": 232,
+      "sha256": "a0221431e1df92acd5db33d0a046791e545cbb33ca2b2cd30f2dc245f2c58ce3"
+    },
+    {
+      "path": "src/kernel/COPYING",
+      "bytes": 18693,
+      "sha256": "af8067302947c01fd9eee72befa54c7e3ef8a48fecde7fd71277f2290b2bf0f7"
+    },
+    {
+      "path": "src/kernel/README.md",
+      "bytes": 1571,
+      "sha256": "66ab7fd35c1e489a6d55915873d2970c9576957dfca45caad1cd94719ff8ae72"
+    },
+    {
+      "path": "src/kernel/build-report.json",
+      "bytes": 732,
+      "sha256": "ba7882c1f47130278889d89077e4a1a8b214288b8ac47c528c3959cf41c01f51"
+    },
+    {
+      "path": "src/kernel/build.sh",
+      "bytes": 487,
+      "sha256": "80c157e1eb0d0b2d0e68c724a70d31175e93e56ba3159324f626cadf9b0cd797"
+    },
+    {
+      "path": "src/kernel/ga36_k11_defconfig",
+      "bytes": 83884,
+      "sha256": "3ace7fbfa4262cf55ca34e34989cfe2e3a79a232044b40938722de2775e444ef"
+    },
+    {
+      "path": "src/kernel/hostcc-zig.py",
+      "bytes": 355,
+      "sha256": "07c8e44ca75d376fed5b7a3b61f9777bfe1662ce036111fbfb4747b5a62a5be7"
+    },
+    {
+      "path": "src/kernel/source-change-manifest.json",
+      "bytes": 786,
+      "sha256": "3af1ff7aecdeba443dd29289def4c0765283e4a85a8d7f6259d7adb4cc272fb5"
+    },
+    {
+      "path": "src/launcher/ARTWORK-OMITTED.json",
+      "bytes": 2400,
+      "sha256": "7ac0baa0e07e544177a0c7a09a5557c2a22438ac93b1c2fbed2fd5cfb3228f92"
+    },
+    {
+      "path": "src/launcher/BUILD-CHECK.json",
+      "bytes": 413,
+      "sha256": "b24cb60e08aa3940bee9ddfa62de7f767399596ec5a8eb096647d7e3c1ac23a6"
+    },
+    {
+      "path": "src/launcher/README.md",
+      "bytes": 1518,
+      "sha256": "535931de5f0c677695550f4809688dda3f5e628e5d515d66eed9dec15c5507a8"
+    },
+    {
+      "path": "src/launcher/app/AndroidManifest.xml",
+      "bytes": 3382,
+      "sha256": "51cee30a21b0e35aaa4a5a3f3e3151e09684e324220d300aa6d4aee7691c8f3a"
+    },
+    {
+      "path": "src/launcher/app/res/drawable/fullscreen_background.xml",
+      "bytes": 108,
+      "sha256": "194443154499e045d62501fab0922b31d275a28c670aef073f68f926fe303f55"
+    },
+    {
+      "path": "src/launcher/app/res/drawable/icon.png",
+      "bytes": 222,
+      "sha256": "8e0e747760a2d1ad03329083baf2dc40154633e74d0258cb79b5d92ad4c9a3fe"
+    },
+    {
+      "path": "src/launcher/app/res/values/styles.xml",
+      "bytes": 574,
+      "sha256": "04c3d2989191f37c522ad8f32861799b4a94578f497565406ad4f25f093f2311"
+    },
+    {
+      "path": "src/launcher/app/res/xml/fn_service.xml",
+      "bytes": 365,
+      "sha256": "94bff37f14d8e11e639dd2801e50f53f666c148b97aad2e3bc8f9b33f8af66f5"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/BackgroundChord.java",
+      "bytes": 646,
+      "sha256": "052ed0d995d3cb9525a4bd8fc4bdf4b6fe0212b69a011f80a801623a3a499ee9"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/BackgroundPolicy.java",
+      "bytes": 505,
+      "sha256": "d1fffe040ecead273060460822a21bb85b6a362b82cdb6a937676a04410a250b"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/BackgroundTasks.java",
+      "bytes": 4546,
+      "sha256": "231eb443f2696a12421e45c0ea92a2f347f27a3f9bdff4fd733837756b4551b0"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/CatalogState.java",
+      "bytes": 357,
+      "sha256": "8ba5cf0097f15f684835bc25b45e918835365a44c000aebd821e0dfffdea53b4"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/ConsolePackagePolicy.java",
+      "bytes": 350,
+      "sha256": "d450c70b4070009fa099c69ebcfedd73cb65ba69a86d001c61ecaa79ba0c884a"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/ConsolePanel.java",
+      "bytes": 1245,
+      "sha256": "590d11d7df6b2e56b299b2449353ca03279f0b9aa5779a41ef8eba0859613d5f"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/ConsoleServices.java",
+      "bytes": 2964,
+      "sha256": "eb3a0b7d86ba39ce4e2f6dac379c7aac27ca1415fe64b5a19ff03a1c0085f949"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/DashboardArt.java",
+      "bytes": 1516,
+      "sha256": "9fc53eee56bb1ad7b1768e9a0818f85c9335acbe52d441161bb359ed6a0b73fb"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/FnKeys.java",
+      "bytes": 1098,
+      "sha256": "78c05dfbff39a8e7b78615652ba9d563cd5fc1996ca3fc74a6087e245fc208f1"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/FnService.java",
+      "bytes": 4155,
+      "sha256": "856ace830763bc3577c2aa9819cff04210583a2d59860824727e77954b1dec1d"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/FullscreenActivity.java",
+      "bytes": 2777,
+      "sha256": "fe9d5ccd651435de540f5a76ab81c36c4d6130b18c84ab6f7dfa66f6514ca5e3"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/GA36Application.java",
+      "bytes": 2473,
+      "sha256": "713bbd12c084f573814ba5cb9564c0f39e5deb354eee44f9e445544b55d04887"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/GameActionsActivity.java",
+      "bytes": 2455,
+      "sha256": "9c545ae8073d0dd571100afe2f8baefbea8951c4360672824dd7380c886d5704"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/GameAssets.java",
+      "bytes": 818,
+      "sha256": "d625a282ee4662b4b552c7124b6ab5a2db3b2685684e4d6d64927e552b5ea7ea"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/GameCover.java",
+      "bytes": 2288,
+      "sha256": "90e19726fd1a3df5947ca2b6cde3f1c12c9bab61cb856a89125b466ce7758f2c"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/GameLayout.java",
+      "bytes": 2024,
+      "sha256": "0a98d2d90e7db428184163719356a0449a04fc1006d61d62c1d648b956bcfa9b"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/GameLogos.java",
+      "bytes": 2156,
+      "sha256": "214d76621c27580b77f83ae88088be8290e11277a7311dc074b42a1df46c1f42"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/GamePackages.java",
+      "bytes": 1063,
+      "sha256": "d8cc065081b7b49bec5d5df3633d82106ca429ee264df099a5e1c01dddd61806"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/GamepadDialog.java",
+      "bytes": 931,
+      "sha256": "e6fffab9e6f8d0fceb4516c3133e5333dd72dac4417aa94bda4f7debfaecb233"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/HomeActivity.java",
+      "bytes": 15291,
+      "sha256": "4f77088f51ff4a94186545ed52b9592f8e349f96f80b6207a94c9109af2fd420"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/I18n.java",
+      "bytes": 8819,
+      "sha256": "35128e3d3c251298d1f18775679f0718b4670f1e8d4c05287a93148a81dc7972"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/KeysActivity.java",
+      "bytes": 955,
+      "sha256": "51d1c6ad0cf589efb7d33c117089c06b5376ebfff9076a5e7ba0e276bc83c91d"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/LaunchPolicy.java",
+      "bytes": 262,
+      "sha256": "24cf42c3ffc79b77c4975330dcfb7fb4796ae86e39f46db9e8fe854a814c8bad"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/MarketLinkActivity.java",
+      "bytes": 427,
+      "sha256": "e8405521c1a77feae64c5e0b17dbdb052cfa173c8adad81debef07e77c5f8628"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/PowerActivity.java",
+      "bytes": 2565,
+      "sha256": "b922c437e8eba5f42af8e417153d2870700e8733eac3ec7d4c5a57d1fc962b65"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/PowerLayout.java",
+      "bytes": 345,
+      "sha256": "dd8807bab164f5385487ce7c71556b30a653c436da9037717261e9a7e15d5b47"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/PowerMenuDispatch.java",
+      "bytes": 365,
+      "sha256": "4fb15e072172326c56570daf6be64bf2f891bbbd5c62f6e0f1ecc132903ac59d"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/PowerMenuPolicy.java",
+      "bytes": 208,
+      "sha256": "8b60efabab4c319825d33a22561c1f5b1ba6ba9dba4cbb32a4163500aae628f6"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/PowerReveal.java",
+      "bytes": 419,
+      "sha256": "6f12ad405d971cb32d3b1a906248eaf486e1eddac29cb1f2519a22c16d259af1"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/PowerScreen.java",
+      "bytes": 3809,
+      "sha256": "1901dc03cb47abb05e4f06ed7ff5835b1f691fdab965de7d089aa5865ee446c3"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/StickProbe.java",
+      "bytes": 2099,
+      "sha256": "bf5c69599c9185a386554e18379f7b57188690a6906348038cc3d5df2fdc247b"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/ThemePalette.java",
+      "bytes": 2589,
+      "sha256": "ca32c856c2b4ab6ae921eb52be2901084d032158c9a9382b48e10bf948f87952"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/UsbActivity.java",
+      "bytes": 2796,
+      "sha256": "6ecb020b213925557d7a27a55020204447caab2370eb661d4bc3b2637fcab8da"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/UsbControl.java",
+      "bytes": 816,
+      "sha256": "f1e2d47824c96997a72353e9713852df5bf0828ef7cd10aa080974c2b6a1a902"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/XboxLayout.java",
+      "bytes": 2018,
+      "sha256": "848deb0e96ad713d3a9eea4a0d2033aea61d4e41f548af0c74d7f206bfc88501"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/XboxRenderer.java",
+      "bytes": 5417,
+      "sha256": "b98161942919a62d38984477789db4ae6b6c453d1a3f99e6bc88d30541d88ea3"
+    },
+    {
+      "path": "src/launcher/app/src/de/ga36/home/XboxStick.java",
+      "bytes": 431,
+      "sha256": "25952853eb1a5be17821fdd16a00130b741fb70ccb4660de1e728b8a39c333fb"
+    },
+    {
+      "path": "src/native/README.md",
+      "bytes": 794,
+      "sha256": "9c0c9ad23b1d66830d2ac5a23c810aafee4ceb1203d9ad13b27e4f2744ca46c2"
+    },
+    {
+      "path": "src/native/build.sh",
+      "bytes": 519,
+      "sha256": "80a8c3c7f4eb8eba5019da65bb51424adf6698810f4ff3d436af9d419e2eaaf9"
+    },
+    {
+      "path": "src/native/clean-images.c",
+      "bytes": 4133,
+      "sha256": "cc2c1e42fb5ce168e0649823bcf4ab9c96374706248a44e85db226390a106dc4"
+    },
+    {
+      "path": "src/native/config.h",
+      "bytes": 247,
+      "sha256": "9943ace03edcccf8e470e409c299002e34ef4b9bba4a4a76c2b77514a65f9d9d"
+    },
+    {
+      "path": "src/native/dual-boot/README.md",
+      "bytes": 1106,
+      "sha256": "51bed1b7ceac14624e23edc64c2f10fb946a3d351e7b2f440c47398e0f820704"
+    },
+    {
+      "path": "src/native/dual-boot/binder-before.c",
+      "bytes": 123137,
+      "sha256": "5e5ff6aabed1a155b2f814d06501b06d9f9f6ca406c1a0d5382ee988982bb7d0"
+    },
+    {
+      "path": "src/native/dual-boot/build.sh",
+      "bytes": 339,
+      "sha256": "a665317c5cce51d173195491e5c4e73e3fd19993d0bca0dfb4462c1b7f42a231"
+    },
+    {
+      "path": "src/native/dual-boot/config.h",
+      "bytes": 247,
+      "sha256": "9943ace03edcccf8e470e409c299002e34ef4b9bba4a4a76c2b77514a65f9d9d"
+    },
+    {
+      "path": "src/native/dual-boot/dual-images.c",
+      "bytes": 6505,
+      "sha256": "b8d1542677f85a973889e650d08cc8213a5bfb2489887a451f2b5e5c4f9ae544"
+    },
+    {
+      "path": "src/native/dual-boot/dual-init.c",
+      "bytes": 8374,
+      "sha256": "7f009989e37cdcfad3646b0353c3d16d7128ccc0003ef0f52053a72fb935f496"
+    },
+    {
+      "path": "src/native/dual-boot/ga36-codec-config.inc",
+      "bytes": 4091,
+      "sha256": "0c17bf6d3a66c4d4152ea25e6c129b6af9c8f265b985d453d619b696d5184cd5"
+    },
+    {
+      "path": "src/native/dual-boot/ga36-uart-config.h",
+      "bytes": 644,
+      "sha256": "05fe492b6459d047301c85705447eeab15196c4204cdf1e462f6104aeef14929"
+    },
+    {
+      "path": "src/native/dual-boot/kernel-compat.inc",
+      "bytes": 4751,
+      "sha256": "3201586781cc0674b8b156c61ec86878fc769f73a33929319f723b2b2a046d65"
+    },
+    {
+      "path": "src/native/dual-boot/kernel-k06-probes.inc",
+      "bytes": 3245,
+      "sha256": "d9f5d7b232ac314047c894b5372747ceccdca20ea88ac74cb240df6b6df34eec"
+    },
+    {
+      "path": "src/native/dual-boot/kernel-k07-timerfd.inc",
+      "bytes": 2077,
+      "sha256": "2851014eb0d51013f795f2eacd2c845c67c5e0264257eabe7ba084a2585838c9"
+    },
+    {
+      "path": "src/native/dual-boot/kernel-k08-memfd.inc",
+      "bytes": 2289,
+      "sha256": "60f6bab8eb38bc6b8b9493af559f81b5a0bbb8e6b0128fdd3b8724c2515d48b3"
+    },
+    {
+      "path": "src/native/dual-boot/make-boot-assets.py",
+      "bytes": 1447,
+      "sha256": "394b0c51a48c23fa3407bd2d9b1e8869052655363eec09a737b8291463e56a3b"
+    },
+    {
+      "path": "src/native/dual-boot/preboot.c",
+      "bytes": 12705,
+      "sha256": "ab8731ef2eb7c8758f2e20ac2d288df05bfe7a2f99eaa76708a6a2f7c2042cf0"
+    },
+    {
+      "path": "src/native/dual-boot/runtime-init.c",
+      "bytes": 27982,
+      "sha256": "d1ec8a359cd4c2e6a5da18c5b731e8c7cbef982933747d84e6214deefc3b63eb"
+    },
+    {
+      "path": "src/native/dual-boot/sha256.h",
+      "bytes": 2687,
+      "sha256": "e3e94e1f7e3c2dccc8a8edb87fa143955201fb2ca020db2cf639ce867466c56b"
+    },
+    {
+      "path": "src/native/dual-boot/test-fake-linker.c",
+      "bytes": 378,
+      "sha256": "5c4d19e6aa3c6f41478a06dae1a3b17fbc3ac76b9a3ebcf50a6aeb64d6ca28c1"
+    },
+    {
+      "path": "src/native/dual-boot/test-log-ring.c",
+      "bytes": 1173,
+      "sha256": "a59551ac41e4ef52d462fd6457797cf476756b3e78678fa593f8cd64288bb801"
+    },
+    {
+      "path": "src/native/dual-boot/test-root-driver.c",
+      "bytes": 2652,
+      "sha256": "f423fa05384616d956e27f1df484b3354bc739e522f1070bdb69c4d50c6634be"
+    },
+    {
+      "path": "src/native/dual-boot/test-root-marker.c",
+      "bytes": 3766,
+      "sha256": "704592db1e8cd31fcb8a6de91d60d622426b9fc18c49504f4a919d67cfdc8c31"
+    },
+    {
+      "path": "src/native/dual-boot/test-root7-driver.c",
+      "bytes": 398,
+      "sha256": "825658d04e06b446e5d4f236f170e0bc828237cfaedf08ca50eec49311069dbc"
+    },
+    {
+      "path": "src/native/dual-boot/test-root7-marker.c",
+      "bytes": 1432,
+      "sha256": "8ae84663cfefa042fe75a6beafba87b2a3e84116d872307a438f2935c03e070f"
+    },
+    {
+      "path": "src/native/dual-boot/v1-config.h",
+      "bytes": 131,
+      "sha256": "c8130772273bcf42b761ebf6271ad256edafe2b155ca985788a8d5b6a53c0379"
+    },
+    {
+      "path": "src/native/dual-init.c",
+      "bytes": 8433,
+      "sha256": "f23daba6af7d79e03177c9ef2edf5a175ab4dc26bd30c82f28e68d4022f8c00d"
+    },
+    {
+      "path": "src/native/ga36-codec-config.inc",
+      "bytes": 4091,
+      "sha256": "0c17bf6d3a66c4d4152ea25e6c129b6af9c8f265b985d453d619b696d5184cd5"
+    },
+    {
+      "path": "src/native/ga36-import.sh",
+      "bytes": 2557,
+      "sha256": "2782563d67011e7924c17d332d3b44df28cae54fa918a2d402e3e67e0cf11e22"
+    },
+    {
+      "path": "src/native/ga36-uart-config.h",
+      "bytes": 644,
+      "sha256": "05fe492b6459d047301c85705447eeab15196c4204cdf1e462f6104aeef14929"
+    },
+    {
+      "path": "src/native/hash.c",
+      "bytes": 492,
+      "sha256": "9acac9779ffa6c2650660aae87c2002500cf365b91a2b83fde151dde0405ca89"
+    },
+    {
+      "path": "src/native/kernel-compat.inc",
+      "bytes": 4751,
+      "sha256": "3201586781cc0674b8b156c61ec86878fc769f73a33929319f723b2b2a046d65"
+    },
+    {
+      "path": "src/native/kernel-k06-probes.inc",
+      "bytes": 3245,
+      "sha256": "d9f5d7b232ac314047c894b5372747ceccdca20ea88ac74cb240df6b6df34eec"
+    },
+    {
+      "path": "src/native/kernel-k07-timerfd.inc",
+      "bytes": 2077,
+      "sha256": "2851014eb0d51013f795f2eacd2c845c67c5e0264257eabe7ba084a2585838c9"
+    },
+    {
+      "path": "src/native/kernel-k08-memfd.inc",
+      "bytes": 2289,
+      "sha256": "60f6bab8eb38bc6b8b9493af559f81b5a0bbb8e6b0128fdd3b8724c2515d48b3"
+    },
+    {
+      "path": "src/native/preboot.c",
+      "bytes": 12705,
+      "sha256": "ab8731ef2eb7c8758f2e20ac2d288df05bfe7a2f99eaa76708a6a2f7c2042cf0"
+    },
+    {
+      "path": "src/native/runtime-init.c",
+      "bytes": 28774,
+      "sha256": "088055c929c10dd2d9a18c7119b243b49345b315af8bbbc19f5fbf50e0b9b735"
+    },
+    {
+      "path": "src/native/sha256.h",
+      "bytes": 2687,
+      "sha256": "e3e94e1f7e3c2dccc8a8edb87fa143955201fb2ca020db2cf639ce867466c56b"
+    },
+    {
+      "path": "src/native/test-fake-linker.c",
+      "bytes": 378,
+      "sha256": "5c4d19e6aa3c6f41478a06dae1a3b17fbc3ac76b9a3ebcf50a6aeb64d6ca28c1"
+    },
+    {
+      "path": "src/native/test-log-ring.c",
+      "bytes": 1173,
+      "sha256": "a59551ac41e4ef52d462fd6457797cf476756b3e78678fa593f8cd64288bb801"
+    },
+    {
+      "path": "src/native/test-root-driver.c",
+      "bytes": 2652,
+      "sha256": "f423fa05384616d956e27f1df484b3354bc739e522f1070bdb69c4d50c6634be"
+    },
+    {
+      "path": "src/native/test-root-marker.c",
+      "bytes": 3766,
+      "sha256": "704592db1e8cd31fcb8a6de91d60d622426b9fc18c49504f4a919d67cfdc8c31"
+    },
+    {
+      "path": "src/native/test-root7-driver.c",
+      "bytes": 398,
+      "sha256": "825658d04e06b446e5d4f236f170e0bc828237cfaedf08ca50eec49311069dbc"
+    },
+    {
+      "path": "src/native/test-root7-marker.c",
+      "bytes": 1432,
+      "sha256": "8ae84663cfefa042fe75a6beafba87b2a3e84116d872307a438f2935c03e070f"
+    },
+    {
+      "path": "src/native/v1-config.h",
+      "bytes": 131,
+      "sha256": "94c0c899caecf1da4288577794d185fa7a52dac8b820c5a7d216c10b940b484b"
+    },
+    {
+      "path": "tools/flasher/README.md",
+      "bytes": 2610,
+      "sha256": "95d8b4ba140947f116542909b5dfc9118d8fb1d1c2cf7c754d5724d4c19c1fad"
+    },
+    {
+      "path": "tools/flasher/screenshots/apks-de.png",
+      "bytes": 72573,
+      "sha256": "8f74e841c9a5bfd5555c9705c6ae2750ca57ceb8b3c5563ee5fe913a7430446d"
+    },
+    {
+      "path": "tools/flasher/screenshots/compact-image-de.png",
+      "bytes": 101326,
+      "sha256": "a2a15546e4d146c9b9deced0a8deae4a2654c884a2870607954d577f7a0175fb"
+    },
+    {
+      "path": "tools/flasher/screenshots/compact-image-en.png",
+      "bytes": 95056,
+      "sha256": "437998a9b70f05cff3df4cbb6e31b93ff2f0cd6a3af1af06057922cbcfe0cfbd"
+    },
+    {
+      "path": "tools/flasher/screenshots/logs-en.png",
+      "bytes": 41975,
+      "sha256": "f9b2153e3d9719a5de18e3477d33c9153f4ed7b819c863305ce11ac1592b664a"
+    },
+    {
+      "path": "tools/flasher/screenshots/obb-de.png",
+      "bytes": 63057,
+      "sha256": "6f30b75719f040d33500c869f84902e97fd45270f46d869daabfc8c639869fa3"
+    },
+    {
+      "path": "tools/flasher/screenshots/system-de.png",
+      "bytes": 75798,
+      "sha256": "a59719e7971a3038ddee9b6cd6ee93b07809122e5d7aea86401afe7c68127984"
+    },
+    {
+      "path": "tools/flasher/src/LICENSE",
+      "bytes": 1069,
+      "sha256": "0ccc61179affdfeecb5b55695914fa6dce18899cfaf744fb9681a2322e450b6b"
+    },
+    {
+      "path": "tools/flasher/src/LICENSES/Apache-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "tools/flasher/src/LICENSES/Font-notices.txt",
+      "bytes": 2076,
+      "sha256": "d6181549dabdd2af5f97528b5d719d5b256c194900336b6a73fdf40a8935089f"
+    },
+    {
+      "path": "tools/flasher/src/README.md",
+      "bytes": 2610,
+      "sha256": "95d8b4ba140947f116542909b5dfc9118d8fb1d1c2cf7c754d5724d4c19c1fad"
+    },
+    {
+      "path": "tools/flasher/src/app.manifest",
+      "bytes": 1178,
+      "sha256": "9250c41a3ce902ab0365ebb2e10781d3c162c177530b1af71d090330dadbad9f"
+    },
+    {
+      "path": "tools/flasher/src/assets/icon.ico",
+      "bytes": 12358,
+      "sha256": "738a367e694147a0ae8943b630c59ec48b6c51625407b91cf06acc722f84b357"
+    },
+    {
+      "path": "tools/flasher/src/assets/icon.png",
+      "bytes": 1842,
+      "sha256": "a670e82e6a2317d45d0c450bc94da43b84f41315a15560cdab922b54a1256ba7"
+    },
+    {
+      "path": "tools/flasher/src/assets/icon.svg",
+      "bytes": 470,
+      "sha256": "873e5f65d7cc04db90bea5f73e2f1b7eda63a27c49d62d59b6e32b3fd05b7549"
+    },
+    {
+      "path": "tools/flasher/src/build.sh",
+      "bytes": 274,
+      "sha256": "bbbc2a0cc4bd29d074dfa654a3722fb85617b30bc4f204404c7af4651daec816"
+    },
+    {
+      "path": "tools/flasher/src/compact.go",
+      "bytes": 9296,
+      "sha256": "e2e7bba6ce7405f767f306c7c21776900b96f120bee196c205287b3b58740977"
+    },
+    {
+      "path": "tools/flasher/src/compact_test.go",
+      "bytes": 11783,
+      "sha256": "22ef129820cfbd355d5e768e109501a1683ff8405879112c64ea68b229d72e2d"
+    },
+    {
+      "path": "tools/flasher/src/desktop.go",
+      "bytes": 20879,
+      "sha256": "77fffe7637dec8ec5f87f77125b65a1b9972d241f0f6c13cebad0eb317eb52db"
+    },
+    {
+      "path": "tools/flasher/src/device_linux.go",
+      "bytes": 7850,
+      "sha256": "16c0ce75752d14627144b2df1583e1a08545a084231bc682bce19c100a38d7ac"
+    },
+    {
+      "path": "tools/flasher/src/device_linux_test.go",
+      "bytes": 1485,
+      "sha256": "5e56fe241559a0c8695441b9df004127c4f871d14895c49ca39df031090411bc"
+    },
+    {
+      "path": "tools/flasher/src/device_windows.go",
+      "bytes": 3795,
+      "sha256": "af6968e7a7081c79c8eec3ad1379f983b0e900559ad38461bb075b8381353ea5"
+    },
+    {
+      "path": "tools/flasher/src/dual_layout_test.go",
+      "bytes": 2771,
+      "sha256": "f786e5eaa9652346184ca30668e0e78b33b7cf309bc6f25e156b44935c47f65e"
+    },
+    {
+      "path": "tools/flasher/src/go.mod",
+      "bytes": 1176,
+      "sha256": "f96c49712e1d960662a7d4748b1c7afc8fd05a8e569a837a5c96c17c59190de8"
+    },
+    {
+      "path": "tools/flasher/src/go.sum",
+      "bytes": 5535,
+      "sha256": "940a0f13b1a8ace16a5104c0e7fe708975e5b90375059f8140e10669153a7198"
+    },
+    {
+      "path": "tools/flasher/src/imports.go",
+      "bytes": 11632,
+      "sha256": "0f86da1605b5127b73f59c9c7f2bffa19f6fb6fd4c369be7b73bcb4f6c9e037b"
+    },
+    {
+      "path": "tools/flasher/src/imports_test.go",
+      "bytes": 5469,
+      "sha256": "3d934075a28910a5480af4620bc63aad40a2c2eeb4772b7773d00c0c03cc53ad"
+    },
+    {
+      "path": "tools/flasher/src/layout.go",
+      "bytes": 3565,
+      "sha256": "d134ae38ca5dcd64f02921f3811f0b8494dc3abe7a6ef30a37fe41dba84429bf"
+    },
+    {
+      "path": "tools/flasher/src/layout_test.go",
+      "bytes": 1721,
+      "sha256": "b474e78d10adb898b2fda8f3c9d30bc2ab4bc09bde295551771cbbc0b6bdd01f"
+    },
+    {
+      "path": "tools/flasher/src/main.go",
+      "bytes": 5747,
+      "sha256": "4590a6ec16ec8cf1f953ecc158542bc385f122d4016c2cb3d00d77d20d5511bc"
+    },
+    {
+      "path": "tools/flasher/src/main_test.go",
+      "bytes": 4464,
+      "sha256": "2ece675d4e52d629439bf32b3beea7d87f930b45c365058e3bd01a5b87d96413"
+    },
+    {
+      "path": "tools/flasher/src/native_job.go",
+      "bytes": 6905,
+      "sha256": "fa7e0790abf04842b17869fdcfa12a9a85e082db931db5036da0685f13e380fc"
+    },
+    {
+      "path": "tools/flasher/src/native_job_test.go",
+      "bytes": 3403,
+      "sha256": "f09169a34163ece681f78d0aff37bb661dc7967d0d8faccffd9e70af2ccf2687"
+    },
+    {
+      "path": "tools/flasher/src/native_platform_linux.go",
+      "bytes": 1704,
+      "sha256": "00fc891a13d38e305d79fb5e6e8c9ac6fbca6b757c6f717d73fcb917bc3606d4"
+    },
+    {
+      "path": "tools/flasher/src/native_platform_windows.go",
+      "bytes": 702,
+      "sha256": "482c0361d39660cddae86dacf2163749ad2a5f75c42db1cd3554e3fa2d79fad3"
+    },
+    {
+      "path": "tools/flasher/src/profiles_test.go",
+      "bytes": 849,
+      "sha256": "8fca732f0dd2084c1b9778ee638d678c05169b72db94f2bfe8c86f5b29e4719d"
+    },
+    {
+      "path": "tools/flasher/src/release.json",
+      "bytes": 414,
+      "sha256": "ce7e20e664c66298f26c90d1e132a945fa98a6f11cabc86f50184e5316dcc89a"
+    },
+    {
+      "path": "tools/flasher/src/versioninfo.json",
+      "bytes": 900,
+      "sha256": "347e407972c6e5f3ab774595325b759aa9858db3c86c7f5302fabae64f53dd64"
+    },
+    {
+      "path": "tools/flasher/src/win_inventory_windows.go",
+      "bytes": 10885,
+      "sha256": "43ffdb1fa9b0f1537634f8365e3aab4d0d7c6187ceac6013362ece4e95da3b8c"
+    },
+    {
+      "path": "tools/flasher/src/win_volume_logic.go",
+      "bytes": 1794,
+      "sha256": "3ca3863f5b5844753ff52f2d2eb2f86cf170a4fc45c50381d0576fb06facc4c1"
+    },
+    {
+      "path": "tools/flasher/src/win_volume_logic_test.go",
+      "bytes": 1440,
+      "sha256": "eb1746815d2870a0d0550927d1f5d6a00a41044175b3c4c8039b2c10a8fb874d"
+    },
+    {
+      "path": "tools/flasher/src/win_volumes_windows.go",
+      "bytes": 2271,
+      "sha256": "b9bd3233681ef0e44b1db758f50bab205e64db9715dfeaa413446a90f4ffa076"
+    },
+    {
+      "path": "tools/verify-source.py",
+      "bytes": 1435,
+      "sha256": "941542f835445d51d1ada9ebea907d66b39106c7981cb5c76a1d2e7ec1bf7c5d"
+    }
+  ]
+}

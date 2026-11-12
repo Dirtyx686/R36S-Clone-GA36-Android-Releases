@@ -1,0 +1,10 @@
+{
+  "linux_flasher_4_2_offline_tests": "passed",
+  "linux_flasher_rebuild_sha256": "bb507ad32631cfefe9bcce2f195001290f00423578174ff62886995ab8a420a6",
+  "delivered_binary_sha256": "bb507ad32631cfefe9bcce2f195001290f00423578174ff62886995ab8a420a6",
+  "bit_identical_linux_flasher_rebuild": true,
+  "rom_or_card_modified": false,
+  "source_selection_verification": "passed",
+  "kernel_source_files_compared": 42850,
+  "kernel_source_mismatches": 0
+}

@@ -1,0 +1,48 @@
+{
+  "english_system_derivative": {
+    "status": "passed",
+    "launcher_versionCode": 102,
+    "launcher_sha256": "e388bcb838bbdc816cf49144530f0b30d54a4feed3b22221b75418d89eb4288a",
+    "original_certificate_retained": true,
+    "android11_source_sha256": "7906d609c3c43dce8430c825e3b58d5dab218493f658c6f33717100bd3bc28ca",
+    "android11_sha256": "86a8be15c04d00b842f222acaf386da777e7b6965590321c2840a53032788858",
+    "android7_source_sha256": "c27d0e5e0302cd1dc8cfde588ef1dd8567967b5e6da6cda7febcd22725ff178b",
+    "android7_sha256": "c0aefd7e901297e78134c72f81bf9659892dd97423fa97ae2346950c62454e78",
+    "android7_all_UID_GID_modes_preserved": 1578,
+    "apk_readback_both": "passed",
+    "default_locale": "en-US",
+    "launcher_languages": [
+      "en",
+      "de"
+    ],
+    "system_binary_changes": [
+      "GA36Home.apk"
+    ],
+    "device_test": "pending",
+    "android11_backing_labels_required": "u:object_r:ga36_loop_image_file:s0"
+  },
+  "os": "11",
+  "base": "P39",
+  "kernel": "K11 #82",
+  "clean_userdata": true,
+  "games_included": false,
+  "accounts_included": false,
+  "compressed_bytes": 822559979,
+  "manifest": {
+    "version": "Alpha V1 \u00b7 P39 Clean",
+    "os": "11",
+    "compressed_sha256": "450dae8768353bab295dad440922f5afbb93cc5ac61e2d475b8326944932eca3",
+    "image_sha256": "8b94bffb2424c23fdabe3b5c0a552e7a45e85b1e828187386415ecf3c943563a",
+    "header_sha256": "4d61ca34fb1ec776d02643bdd53ccc7390f46d2a857351d415d8bd99f88b302f",
+    "image_bytes": 31138512896,
+    "board": "GA36 Allwinner A33,512MB RAM",
+    "layout": "GA36-clean-v2",
+    "zram_mib": 256,
+    "sd_swap_gib": 4
+  },
+  "full_decompression_readback": "passed",
+  "all_created_filesystems": "e2fsck passed",
+  "swap_no_holes_verified": true,
+  "startup_root_sha256": "a446aac9fb08b001ac6f453dc3ae376e1dd15dcd8b1f8ff41773c621d26e0a1a",
+  "native_boot_validation": "ARM selftests passed; physical device test pending"
+}

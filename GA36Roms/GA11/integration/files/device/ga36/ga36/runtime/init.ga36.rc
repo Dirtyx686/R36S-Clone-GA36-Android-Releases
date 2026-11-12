@@ -1,0 +1,56 @@
+# All three image loops are attached and mounted by the guarded P07 bootstrap.
+# first_stage_mount marks them as already mounted; mount_all never formats/checks live data.
+on init
+    # The retained Mali r4p0 library opens mali0; the BSP exposes mali.
+    symlink /dev/mali /dev/mali0
+
+on fs
+    mount_all /vendor/etc/fstab.ga36
+
+on post-fs-data
+    mkdir /data/vendor/ga36 0700 system system
+    write /data/vendor/ga36/backlight.txt ""
+    chown system system /data/vendor/ga36/backlight.txt
+    chmod 0600 /data/vendor/ga36/backlight.txt
+
+on property:sys.boot_completed=1
+    write /data/vendor/ga36/boot-complete 1
+
+# K05 uses real cgroup-v1 controllers; no cgroup2/schedtune/memcg emulation.
+on init
+    mkdir /dev/freezer/frozen 0755 system system
+    write /dev/freezer/frozen/freezer.state FROZEN
+    chmod 0664 /dev/freezer/tasks
+    chmod 0664 /dev/freezer/cgroup.procs
+    chmod 0664 /dev/freezer/frozen/tasks
+    chmod 0664 /dev/freezer/frozen/cgroup.procs
+    chown system system /dev/freezer/tasks
+    chown system system /dev/freezer/cgroup.procs
+    chown system system /dev/freezer/frozen/tasks
+    chown system system /dev/freezer/frozen/cgroup.procs
+    mkdir /dev/cpuset/rt 0755 system system
+    copy /dev/cpuset/cpus /dev/cpuset/rt/cpus
+    copy /dev/cpuset/mems /dev/cpuset/rt/mems
+    chown system system /dev/cpuset/rt/tasks
+    chmod 0664 /dev/cpuset/rt/tasks
+    mkdir /dev/cpuset/nnapi-hal 0755 system system
+    copy /dev/cpuset/cpus /dev/cpuset/nnapi-hal/cpus
+    copy /dev/cpuset/mems /dev/cpuset/nnapi-hal/mems
+    chown system system /dev/cpuset/nnapi-hal/tasks
+    chmod 0664 /dev/cpuset/nnapi-hal/tasks
+
+# Console pointer: read physical evdev without grabbing; create a standard mouse.
+on post-fs-data
+    write /data/vendor/ga36/input-pointer.txt ""
+    chown system system /data/vendor/ga36/input-pointer.txt
+    chmod 0600 /data/vendor/ga36/input-pointer.txt
+
+on property:sys.boot_completed=1
+    # P26: navigation uses D-pad/A/B; the optional mouse remains disabled.
+    stop ga36-pointer
+
+service ga36-pointer /ga36-pointer --run
+    disabled
+    class late_start
+    user system
+    group input

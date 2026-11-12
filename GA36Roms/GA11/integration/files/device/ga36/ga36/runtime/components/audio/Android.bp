@@ -1,0 +1,12 @@
+cc_library_shared {
+    name: "audio.primary.ga36",
+    srcs: ["audio-ga36.c"],
+    vendor: true,
+    relative_install_path: "hw",
+    compile_multilib: "32",
+    header_libs: ["libhardware_headers", "libaudio_system_headers"],
+    shared_libs: ["libtinyalsa", "libcutils", "liblog"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+    ldflags: ["-Wl,--hash-style=both", "-Wl,--pack-dyn-relocs=none"],
+    stl: "none",
+}

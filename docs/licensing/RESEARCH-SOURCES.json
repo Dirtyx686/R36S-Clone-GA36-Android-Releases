@@ -1,0 +1,75 @@
+{
+  "checked": "2026-11-12",
+  "sources": [
+    {
+      "title": "Arm userspace binary terms",
+      "url": "https://developer.arm.com/Downloads/-/Mali%20GPUs%20User-Space%20Binary%20Drivers",
+      "finding": "Exact included EULA controls. The 2016 Midgard r6p0 statement is not proof for our Mali400 r4p0 Android blobs."
+    },
+    {
+      "title": "Kernel module license tags",
+      "url": "https://www.kernel.org/doc/html/next/process/license-rules.html#module-license",
+      "finding": "Module tags do not replace corresponding source license information."
+    },
+    {
+      "title": "BusyBox license and source requirements",
+      "url": "https://busybox.net/license.html",
+      "finding": "GPLv2; source/config/scripts for the version distributed are relevant."
+    },
+    {
+      "title": "U-Boot source license",
+      "url": "https://u-boot-project.org/",
+      "finding": "Upstream U-Boot is GPL; upstream availability alone does not identify vendor dirty changes."
+    },
+    {
+      "title": "AOSP licensing",
+      "url": "https://source.android.com/docs/setup/contribute/licenses",
+      "finding": "AOSP has multiple licenses; Android is not covered by one blanket Apache grant."
+    },
+    {
+      "title": "Exact GPU/gralloc donor tree",
+      "url": "https://github.com/realthunder/a33_android_device_common/tree/3b57d03e0d75374516daa67f3383efbca9d3417f",
+      "finding": "1304 tree entries checked; no LICENSE/COPYING/NOTICE/EULA path in this pinned tree."
+    },
+    {
+      "title": "Exact legacy audio/BusyBox donor tree",
+      "url": "https://github.com/CustomROMs/android_vendor_astar_chiphd/tree/7bfe614a9936c1699d38bcbd9d663e526cd1bb46",
+      "finding": "1548 tree entries checked; etc/NOTICE.html.gz present, no separate applicable blob EULA located."
+    },
+    {
+      "title": "Kernel source base",
+      "url": "https://github.com/allwinner-zh/linux-3.4-sunxi/tree/6964d467510849e3e262518cb87bff7ef92e01f5",
+      "finding": "Recorded D01/K11 source ancestry; does not establish vendor module correspondence."
+    },
+    {
+      "title": "A33 display source candidate",
+      "url": "https://github.com/Icenowy/linux-kernel-lichee-a33/tree/24cd2bc81a1dc3d86df598192a152e4a262f8f40",
+      "finding": "Recorded display source ancestry; not a claim that shipped disp/lcd modules were built from it."
+    },
+    {
+      "title": "Amaze original v3.10 and license",
+      "url": "https://github.com/TeamAmaze/AmazeFileManager/tree/7136ff3e796507310e7173308e60dab566691da4",
+      "finding": "Exact developer release APK matches; GPLv3-or-later ROM-preinstallation permission stated in README; source archive collected."
+    },
+    {
+      "title": "BusyBox exact original binary",
+      "url": "https://busybox.net/downloads/binaries/1.20.0/",
+      "finding": "Official ARMv6 matches both shipped copies exactly; original MANIFEST identifies source versions and build system."
+    },
+    {
+      "title": "Aboriginal historical release",
+      "url": "https://landley.net/code/aboriginal/",
+      "finding": "22 August2012 announcement maps release1.2.0 to hg1535; source archive collected and matched to Git snapshot."
+    },
+    {
+      "title": "SDK terms",
+      "url": "https://developer.android.com/studio/terms",
+      "finding": "Sections3.4 and3.5 distinguish bulk SDK restrictions and separately open-source-licensed components."
+    },
+    {
+      "title": "Bootlin Mali permission statement",
+      "url": "https://bootlin.com/blog/mali-opengl-support-on-allwinner-platforms-with-mainline-linux/",
+      "finding": "Documents Allwinner permission for the Linux packages it publishes; not proof for our Android r4p0 binaries."
+    }
+  ]
+}

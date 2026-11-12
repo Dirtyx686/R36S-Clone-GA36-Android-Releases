@@ -1,0 +1,152 @@
+diff --git a/graphics/allocator/2.0/utils/passthrough/include/allocator-passthrough/2.0/Gralloc0Hal.h b/graphics/allocator/2.0/utils/passthrough/include/allocator-passthrough/2.0/Gralloc0Hal.h
+index 6c179be..1b9eb61 100644
+--- a/graphics/allocator/2.0/utils/passthrough/include/allocator-passthrough/2.0/Gralloc0Hal.h
++++ b/graphics/allocator/2.0/utils/passthrough/include/allocator-passthrough/2.0/Gralloc0Hal.h
+@@ -21,6 +21,8 @@
+ #endif
+ 
+ #include <cstring>  // for strerror
++#include <cutils/properties.h>
++#include <inttypes.h>
+ 
+ #include <allocator-hal/2.0/AllocatorHal.h>
+ #include <hardware/gralloc.h>
+@@ -132,8 +134,25 @@ class Gralloc0HalImpl : public Hal {
+ 
+         const native_handle_t* buffer = nullptr;
+         int stride = 0;
++        // Legacy framebuffer handles include process-local state and two fixed
++        // slots. HIDL transports client targets across processes: use the
++        // driver's shareable ION path on GA36, and its existing post-copy path.
++        char board[PROPERTY_VALUE_MAX] = {};
++        property_get("ro.hardware.gralloc", board, "");
++        const bool sharedTarget = (info.usage & GRALLOC_USAGE_HW_FB) &&
++                                  strcmp(board, "ga36") == 0;
++        const uint64_t allocationUsage = sharedTarget ?
++                info.usage & ~GRALLOC_USAGE_HW_FB : info.usage;
+         int result = mDevice->alloc(mDevice, info.width, info.height, static_cast<int>(info.format),
+-                                    info.usage, &buffer, &stride);
++                                    allocationUsage, &buffer, &stride);
++        if (sharedTarget) {
++            ALOGI("GA36_HIDL_ION_CLIENT_TARGET result=%d %ux%u usage=%" PRIu64,
++                  result, info.width, info.height, allocationUsage);
++        }
++        if (result != 0) {
++            ALOGE("legacy gralloc allocation failed result=%d %ux%u format=%d usage=%" PRIu64,
++                  result, info.width, info.height, static_cast<int>(info.format), info.usage);
++        }
+         switch (result) {
+             case 0:
+                 *outBuffer = buffer;
+diff --git a/graphics/composer/2.1/utils/hwc2onfbadapter/HWC2OnFbAdapter.cpp b/graphics/composer/2.1/utils/hwc2onfbadapter/HWC2OnFbAdapter.cpp
+index 0f50577..4f8be5e 100644
+--- a/graphics/composer/2.1/utils/hwc2onfbadapter/HWC2OnFbAdapter.cpp
++++ b/graphics/composer/2.1/utils/hwc2onfbadapter/HWC2OnFbAdapter.cpp
+@@ -24,6 +24,13 @@
+ #include <type_traits>
+ 
+ #include <inttypes.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/fb.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <sys/stat.h>
++#include <sys/system_properties.h>
+ #include <time.h>
+ #include <sys/prctl.h>
+ #include <unistd.h> // for close
+@@ -38,6 +45,36 @@ namespace android {
+ 
+ namespace {
+ 
++// Only the GA36 legacy framebuffer needs this BSP bridge.
++static bool isGa36Framebuffer() {
++    static const bool ga36 = [] {
++        char value[PROP_VALUE_MAX] = {};
++        __system_property_get("ro.hardware.gralloc", value);
++        return strcmp(value, "ga36") == 0;
++    }();
++    return ga36;
++}
++
++static int32_t setGa36FramebufferPower(int32_t mode) {
++    int blank;
++    if (mode == HWC2_POWER_MODE_OFF) blank = FB_BLANK_POWERDOWN;
++    else if (mode == HWC2_POWER_MODE_ON) blank = FB_BLANK_UNBLANK;
++    else return HWC2_ERROR_UNSUPPORTED;
++    int fd = open("/dev/graphics/fb0", O_RDWR | O_CLOEXEC | O_NOFOLLOW);
++    if (fd < 0) return HWC2_ERROR_NO_RESOURCES;
++    struct stat st;
++    if (fstat(fd, &st) || !S_ISCHR(st.st_mode)) {
++        close(fd);
++        return HWC2_ERROR_NO_RESOURCES;
++    }
++    int result;
++    do { result = ioctl(fd, FBIOBLANK, blank); } while (result < 0 && errno == EINTR);
++    int saved = result < 0 ? errno : 0;
++    close(fd);
++    ALOGI("GA36_DISPLAY_POWER mode=%d blank=%d result=%d errno=%d", mode, blank, result, saved);
++    return result == 0 ? HWC2_ERROR_NONE : HWC2_ERROR_NO_RESOURCES;
++}
++
+ void dumpHook(hwc2_device_t* device, uint32_t* outSize, char* outBuffer) {
+     auto& adapter = HWC2OnFbAdapter::cast(device);
+     if (outBuffer) {
+@@ -137,13 +174,14 @@ int32_t getHdrCapabilitiesHook(hwc2_device_t* device, hwc2_display_t display, ui
+     return HWC2_ERROR_NONE;
+ }
+ 
+-int32_t setPowerModeHook(hwc2_device_t* device, hwc2_display_t display, int32_t /*mode*/) {
++int32_t setPowerModeHook(hwc2_device_t* device, hwc2_display_t display, int32_t mode) {
+     auto& adapter = HWC2OnFbAdapter::cast(device);
+     if (adapter.getDisplayId() != display) {
+         return HWC2_ERROR_BAD_DISPLAY;
+     }
+ 
+-    // pretend that it works
++    if (isGa36Framebuffer()) return setGa36FramebufferPower(mode);
++    // Preserve the generic adapter behavior on other devices.
+     return HWC2_ERROR_NONE;
+ }
+ 
+@@ -775,7 +813,9 @@ void HWC2OnFbAdapter::clearDirtyLayers() {
+  * hopefully are strong enough that the rendering will be blocked.
+  */
+ void HWC2OnFbAdapter::setBuffer(buffer_handle_t buffer) {
+-    if (mFbDevice->compositionComplete) {
++    // GA36 compositionComplete calls glFinish. This HIDL server has no EGL
++    // context; SurfaceFlinger already completed GLES and supplied its fence.
++    if (!isGa36Framebuffer() && mFbDevice->compositionComplete) {
+         mFbDevice->compositionComplete(mFbDevice);
+     }
+     mBuffer = buffer;
+diff --git a/graphics/mapper/2.0/utils/passthrough/include/mapper-passthrough/2.0/Gralloc0Hal.h b/graphics/mapper/2.0/utils/passthrough/include/mapper-passthrough/2.0/Gralloc0Hal.h
+index 7369ac7..8c4d83c 100644
+--- a/graphics/mapper/2.0/utils/passthrough/include/mapper-passthrough/2.0/Gralloc0Hal.h
++++ b/graphics/mapper/2.0/utils/passthrough/include/mapper-passthrough/2.0/Gralloc0Hal.h
+@@ -19,6 +19,7 @@
+ #warning "Gralloc0Hal.h included without LOG_TAG"
+ #endif
+ 
++#include <errno.h>
+ #include <inttypes.h>
+ 
+ #include <hardware/gralloc.h>
+@@ -77,10 +78,15 @@ class Gralloc0HalImpl : public Hal {
+                        native_handle_t** outBufferHandle) override {
+         native_handle_t* bufferHandle = native_handle_clone(rawHandle);
+         if (!bufferHandle) {
++            ALOGE("GA36_GRALLOC_IMPORT_CLONE_FAILED errno=%d fds=%d ints=%d version=%d",
++                  errno, rawHandle->numFds, rawHandle->numInts, rawHandle->version);
+             return Error::NO_RESOURCES;
+         }
+ 
+-        if (mModule->registerBuffer(mModule, bufferHandle)) {
++        const int registration = mModule->registerBuffer(mModule, bufferHandle);
++        if (registration) {
++            ALOGE("GA36_GRALLOC_IMPORT_REGISTER_FAILED result=%d errno=%d fds=%d ints=%d",
++                  registration, errno, bufferHandle->numFds, bufferHandle->numInts);
+             native_handle_close(bufferHandle);
+             native_handle_delete(bufferHandle);
+             return Error::BAD_BUFFER;

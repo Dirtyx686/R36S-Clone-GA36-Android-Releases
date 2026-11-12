@@ -1,0 +1,5 @@
+#include "runtime-init.c"
+int main(void){char dir[]="/tmp/ga36-v1-log-ring-XXXXXX";assert(mkdtemp(dir));root=dir;char p[512];snprintf(p,sizeof(p),"%s/GA36-ANDROID11-BOOT",dir);assert(!mkdir(p,0700));
+ for(int i=1;i<=8;i++)for(int k=0;k<2;k++){snprintf(p,sizeof(p),"%s/GA36-ANDROID11-BOOT/%s-%02d.txt",dir,k?"kernel-live":"run",i);int fd=open(p,O_WRONLY|O_CREAT|O_EXCL,0600);assert(fd>=0);close(fd);}
+ for(int i=0;i<24;i++){logfd=-1;logbytes=0;assert(!open_log()&&logslot>=1&&logslot<=8);assert(fcntl(logfd,F_GETFD)&FD_CLOEXEC);assert(fcntl(logfd,F_GETFL)&O_DSYNC);assert(write(logfd,"bounded new boot\n",17)==17);close(logfd);logfd=-1;snprintf(p,sizeof(p),"%s/GA36-ANDROID11-BOOT/kernel-live-%02u.txt",dir,logslot);struct stat s;assert(!stat(p,&s)&&s.st_size==0);}
+ for(int i=1;i<=8;i++)for(int k=0;k<2;k++){snprintf(p,sizeof(p),"%s/GA36-ANDROID11-BOOT/%s-%02d.txt",dir,k?"kernel-live":"run",i);assert(!unlink(p));}snprintf(p,sizeof(p),"%s/GA36-ANDROID11-BOOT",dir);assert(!rmdir(p));assert(!rmdir(dir));puts("PASS actual bounded log ring across24boots: fixed8paired labelled slots reused; no exhaustion or new persistent files; temporary host filesystem only");return 0;}

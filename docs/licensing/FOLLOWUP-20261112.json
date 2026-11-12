@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-12",
+  "actual_package": "P39 clean English dual / K11#82",
+  "Amaze": {
+    "version": "3.10",
+    "versionCode": 121,
+    "sha256": "aa8512fc3e02f0585dc435628e3d5fdc7af306adae4130155c801fcba4f07639",
+    "official_release_matches": true,
+    "source_revision": "7136ff3e796507310e7173308e60dab566691da4",
+    "source_archive": "GA36-Amaze-3.10-source-evidence.tar.gz",
+    "upstream_ROM_preinstallation_permission": "explicit; GPLv3-or-later conditions and dependency obligations apply"
+  },
+  "BusyBox": {
+    "version": "1.20.0",
+    "sha256": "eab7d79401911369d90960e44d4148c6b8cb082239e8c63b1beafcf8a02c1fb1",
+    "official_ARMv6_matches_both_boot_and_GA7": true,
+    "build_system": "Aboriginal1.2.0 hg1535 / node2d264744ac3a7e623c65137f3f410897aac90f31",
+    "Git_snapshot": "0ce825fefd9f16cf73287b8ffabc06daa3b8eb89",
+    "busybox_uClibc_SHA1_match_build_script": true,
+    "original_expanded_config_recovered": false,
+    "fresh_historical_rebuild_claimed": false,
+    "source_archive": "GA36-BusyBox-1.20.0-source-evidence.tar.gz"
+  },
+  "replacement": {
+    "source_archive": "GA36-BusyBox-1.36.1-replacement-source-not-installed.tar.gz",
+    "version": "1.36.1 + legacy timeout patch",
+    "ARM_emulation_checks_passed": 17,
+    "test_date": "2026-11-08",
+    "installed": false,
+    "device_tested": false,
+    "missing_old_applets": [
+      "catv",
+      "lzopcat",
+      "unlzop"
+    ]
+  },
+  "ROM_upload_clearance_complete": false,
+  "ROM_changed": false,
+  "published": false,
+  "seller_identification": "owner does not know"
+}

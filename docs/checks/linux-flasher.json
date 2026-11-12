@@ -1,0 +1,15 @@
+{
+  "tests_passed": 34,
+  "tests_skipped": [
+    "TestRealAPKOptional"
+  ],
+  "suite": "pass",
+  "actual_dual_image_profile": "passed",
+  "known_failed_images": "rejected",
+  "original_dual_header_unchanged": "passed with working 4KiB prefix",
+  "physical_card_write": "not exercised",
+  "device_boot": "pending",
+  "version": "4.1-dual",
+  "DE_EN_actual_image_GUI": "verified in isolated demo",
+  "binary_sha256": "9dbf8c94f592d6e1ea8f7e5a813bede4048149d687a85e7db5f5ae866fe4b8ce"
+}

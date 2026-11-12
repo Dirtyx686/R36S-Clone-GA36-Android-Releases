@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-12",
+  "common": {
+    "sha": "3b57d03e0d75374516daa67f3383efbca9d3417f",
+    "tree_entries": 1304,
+    "license_paths": []
+  },
+  "astar": {
+    "sha": "7bfe614a9936c1699d38bcbd9d663e526cd1bb46",
+    "tree_entries": 1548,
+    "license_paths": [
+      "etc/NOTICE.html.gz"
+    ]
+  },
+  "verification": "Pinned trees also fetched from GitHub during this audit. Exact Git blob SHA1 plus extracted-file SHA256 recorded. Repository presence is not redistribution permission."
+}

@@ -1,0 +1,11 @@
+cc_library_shared {
+    name: "lights.ga36",
+    srcs: ["lights-ga36.c"],
+    vendor: true,
+    relative_install_path: "hw",
+    compile_multilib: "32",
+    header_libs: ["libhardware_headers"],
+    cflags: ["-Wall", "-Wextra", "-Wno-misleading-indentation"],
+    ldflags: ["-Wl,--hash-style=both", "-Wl,--pack-dyn-relocs=none"],
+    stl: "none",
+}

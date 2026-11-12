@@ -1,0 +1,2 @@
+# Vendor init copies the existing cpuset cpus/mems values into its groups.
+allow vendor_init cgroup:file r_file_perms;

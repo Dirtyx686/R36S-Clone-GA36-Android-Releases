@@ -1,0 +1,7 @@
+# The verified three-file codec tmpfs is staged before Android loads policy.
+# Label it during SetupSelinux, before exec transitions kernel -> init.
+# AOSP intentionally reserves relabelto of vendor configuration to this stage.
+# No init/media/app permission expansion and no permissive domain.
+allow kernel tmpfs:dir { getattr search open read relabelfrom };
+allow kernel tmpfs:file { getattr relabelfrom };
+allow kernel vendor_configs_file:{ dir file } relabelto;

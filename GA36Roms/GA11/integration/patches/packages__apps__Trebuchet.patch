@@ -1,0 +1,112 @@
+diff --git a/Android.mk b/Android.mk
+index e3daddc..251ff31 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -201,7 +201,7 @@ LOCAL_RESOURCE_DIR := \
+     $(LOCAL_PATH)/quickstep/recents_ui_overrides/res
+ 
+ LOCAL_FULL_LIBS_MANIFEST_FILES := \
+-    $(LOCAL_PATH)/quickstep/AndroidManifest-launcher.xml \
++    $(if $(filter true,$(GA36_MINIMAL_CONSOLE)),device/ga36/ga36/runtime/manifest-recents-only.xml,$(LOCAL_PATH)/quickstep/AndroidManifest-launcher.xml) \
+     $(LOCAL_PATH)/AndroidManifest-common.xml
+ 
+ LOCAL_MANIFEST_FILE := quickstep/AndroidManifest.xml
+@@ -252,7 +252,7 @@ LOCAL_REQUIRED_MODULES := privapp_whitelist_com.android.launcher3
+ 
+ LOCAL_FULL_LIBS_MANIFEST_FILES := \
+     $(LOCAL_PATH)/go/AndroidManifest.xml \
+-    $(LOCAL_PATH)/quickstep/AndroidManifest-launcher.xml \
++    $(if $(filter true,$(GA36_MINIMAL_CONSOLE)),device/ga36/ga36/runtime/manifest-recents-only.xml,$(LOCAL_PATH)/quickstep/AndroidManifest-launcher.xml) \
+     $(LOCAL_PATH)/AndroidManifest-common.xml
+ 
+ LOCAL_MANIFEST_FILE := quickstep/AndroidManifest.xml
+diff --git a/quickstep/src/com/android/quickstep/OverviewComponentObserver.java b/quickstep/src/com/android/quickstep/OverviewComponentObserver.java
+index 07f838b..43e3f69 100644
+--- a/quickstep/src/com/android/quickstep/OverviewComponentObserver.java
++++ b/quickstep/src/com/android/quickstep/OverviewComponentObserver.java
+@@ -78,10 +78,15 @@ public final class OverviewComponentObserver {
+                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+         mMyHomeIntent = new Intent(mCurrentHomeIntent).setPackage(mContext.getPackageName());
+         ResolveInfo info = context.getPackageManager().resolveActivity(mMyHomeIntent, 0);
+-        ComponentName myHomeComponent =
+-                new ComponentName(context.getPackageName(), info.activityInfo.name);
++        // A dedicated console HOME may disable this launcher's HOME activity.
++        // Its recents backend must still initialize without a resolver result.
++        ComponentName myHomeComponent = info != null && info.activityInfo != null
++                ? new ComponentName(context.getPackageName(), info.activityInfo.name)
++                : new ComponentName(mContext, RecentsActivity.class);
+         mMyHomeIntent.setComponent(myHomeComponent);
+-        mConfigChangesMap.append(myHomeComponent.hashCode(), info.activityInfo.configChanges);
++        if (info != null && info.activityInfo != null) {
++            mConfigChangesMap.append(myHomeComponent.hashCode(), info.activityInfo.configChanges);
++        }
+ 
+         ComponentName fallbackComponent = new ComponentName(mContext, RecentsActivity.class);
+         mFallbackIntent = new Intent(Intent.ACTION_MAIN)
+diff --git a/src/com/android/launcher3/widget/WidgetManagerHelper.java b/src/com/android/launcher3/widget/WidgetManagerHelper.java
+index 4b6c569..8d50430 100644
+--- a/src/com/android/launcher3/widget/WidgetManagerHelper.java
++++ b/src/com/android/launcher3/widget/WidgetManagerHelper.java
+@@ -57,7 +57,9 @@ public class WidgetManagerHelper {
+ 
+     public WidgetManagerHelper(Context context) {
+         mContext = context;
+-        mAppWidgetManager = AppWidgetManager.getInstance(context);
++        mAppWidgetManager = context.getPackageManager().hasSystemFeature(
++                android.content.pm.PackageManager.FEATURE_APP_WIDGETS)
++                ? AppWidgetManager.getInstance(context) : null;
+     }
+ 
+     /**
+@@ -67,7 +69,8 @@ public class WidgetManagerHelper {
+         if (appWidgetId <= LauncherAppWidgetInfo.CUSTOM_WIDGET_ID) {
+             return CustomWidgetManager.INSTANCE.get(mContext).getWidgetProvider(appWidgetId);
+         }
+-        AppWidgetProviderInfo info = mAppWidgetManager.getAppWidgetInfo(appWidgetId);
++        AppWidgetProviderInfo info = mAppWidgetManager == null ? null
++                : mAppWidgetManager.getAppWidgetInfo(appWidgetId);
+         return info == null ? null : LauncherAppWidgetProviderInfo.fromProviderInfo(mContext, info);
+     }
+ 
+@@ -76,7 +79,7 @@ public class WidgetManagerHelper {
+      */
+     @TargetApi(Build.VERSION_CODES.O)
+     public List<AppWidgetProviderInfo> getAllProviders(@Nullable PackageUserKey packageUser) {
+-        if (WidgetsModel.GO_DISABLE_WIDGETS) {
++        if (WidgetsModel.GO_DISABLE_WIDGETS || mAppWidgetManager == null) {
+             return Collections.emptyList();
+         }
+ 
+@@ -107,7 +110,7 @@ public class WidgetManagerHelper {
+      */
+     public boolean bindAppWidgetIdIfAllowed(int appWidgetId, AppWidgetProviderInfo info,
+             Bundle options) {
+-        if (WidgetsModel.GO_DISABLE_WIDGETS) {
++        if (WidgetsModel.GO_DISABLE_WIDGETS || mAppWidgetManager == null) {
+             return false;
+         }
+         if (appWidgetId <= LauncherAppWidgetInfo.CUSTOM_WIDGET_ID) {
+@@ -134,7 +137,8 @@ public class WidgetManagerHelper {
+      * Returns if a AppWidgetProvider has marked a widget restored
+      */
+     public boolean isAppWidgetRestored(int appWidgetId) {
+-        return !WidgetsModel.GO_DISABLE_WIDGETS && mAppWidgetManager.getAppWidgetOptions(
++        return !WidgetsModel.GO_DISABLE_WIDGETS && mAppWidgetManager != null
++                && mAppWidgetManager.getAppWidgetOptions(
+                 appWidgetId).getBoolean(WIDGET_OPTION_RESTORE_COMPLETED);
+     }
+ 
+@@ -148,7 +152,12 @@ public class WidgetManagerHelper {
+     }
+ 
+     private static Stream<AppWidgetProviderInfo> allWidgetsSteam(Context context) {
+-        AppWidgetManager awm = context.getSystemService(AppWidgetManager.class);
++        AppWidgetManager awm = context.getPackageManager().hasSystemFeature(
++                android.content.pm.PackageManager.FEATURE_APP_WIDGETS)
++                ? context.getSystemService(AppWidgetManager.class) : null;
++        if (awm == null) {
++            return Stream.empty();
++        }
+         return Stream.concat(
+                 UserCache.INSTANCE.get(context)
+                         .getUserProfiles()

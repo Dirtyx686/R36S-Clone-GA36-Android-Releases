@@ -1,0 +1,16 @@
+diff --git a/java/proto.go b/java/proto.go
+index 4d735eb..6d7e8ff 100644
+--- a/java/proto.go
++++ b/java/proto.go
+@@ -22,9 +22,9 @@ import (
+ )
+ 
+ func genProto(ctx android.ModuleContext, protoFiles android.Paths, flags android.ProtoFlags) android.Paths {
+-	// Shard proto files into groups of 100 to avoid having to recompile all of them if one changes and to avoid
++	// Shard proto files into groups of 20 to avoid having to recompile all of them if one changes and to avoid
+ 	// hitting command line length limits.
+-	shards := android.ShardPaths(protoFiles, 100)
++	shards := android.ShardPaths(protoFiles, 20)
+ 
+ 	srcJarFiles := make(android.Paths, 0, len(shards))
+ 

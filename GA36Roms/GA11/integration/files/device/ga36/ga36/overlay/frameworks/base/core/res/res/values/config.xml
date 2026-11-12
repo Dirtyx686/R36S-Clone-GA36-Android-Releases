@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="config_defaultNightMode">2</integer>
+    <bool name="config_lockDayNightMode">true</bool>
+    <bool name="config_ga36ForceDarkMode">true</bool>
+    <!-- Dedicated console: boot and wake without a swipe-to-unlock screen. -->
+    <bool name="config_disableLockscreenByDefault">true</bool>
+    <!-- Console menus draw their own focus; suppress the fallback full-game outline. -->
+    <bool name="config_useDefaultFocusHighlight">false</bool>
+</resources>

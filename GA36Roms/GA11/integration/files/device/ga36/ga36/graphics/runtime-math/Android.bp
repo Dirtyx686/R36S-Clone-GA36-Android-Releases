@@ -1,0 +1,16 @@
+// Canonical compiler-rt ARM EABI helpers for the retained legacy Mali blob.
+cc_library_shared {
+    name: "libga36rt",
+    vendor: true,
+    compile_multilib: "32",
+    srcs: ["lib/builtins/arm/aeabi_uldivmod.S", "lib/builtins/udivmoddi4.c", "lib/builtins/popcountsi2.c"],
+    local_include_dirs: ["lib/builtins"],
+    shared_libs: ["libstdc++"],
+    system_shared_libs: ["libc"],
+    stl: "none",
+    cflags: ["-Wall", "-Wextra", "-fno-builtin"],
+    // Preserve the original stdc++ dependency transitively after in-place
+    // replacement of its equal-length DT_NEEDED string in libMali.
+    ldflags: ["-Wl,--no-as-needed", "-Wl,--hash-style=both", "-Wl,--pack-dyn-relocs=none"],
+    version_script: "exports.map",
+}

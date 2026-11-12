@@ -1,0 +1,71 @@
+diff --git a/media/libstagefright/MediaCodecList.cpp b/media/libstagefright/MediaCodecList.cpp
+index ac54fa1..c0b2ce9 100644
+--- a/media/libstagefright/MediaCodecList.cpp
++++ b/media/libstagefright/MediaCodecList.cpp
+@@ -97,7 +97,10 @@ std::vector<MediaCodecListBuilderBase *> GetBuilders() {
+     std::vector<MediaCodecListBuilderBase *> builders;
+     // if plugin provides the input surface, we cannot use OMX video encoders.
+     // In this case, rely on plugin to provide list of OMX codecs that are usable.
+-    sp<PersistentSurface> surfaceTest = CCodec::CreateInputSurface();
++    // A disabled Codec2 backend must not probe its graphic surfaces or enumerate
++    // its components. Legacy gralloc devices use the existing OMX software path.
++    const bool codec2Enabled = property_get_int32("debug.stagefright.ccodec", 4) != 0;
++    sp<PersistentSurface> surfaceTest = codec2Enabled ? CCodec::CreateInputSurface() : nullptr;
+     if (surfaceTest == nullptr) {
+         ALOGD("Allowing all OMX codecs");
+         builders.push_back(&sOmxInfoBuilder);
+@@ -105,7 +108,7 @@ std::vector<MediaCodecListBuilderBase *> GetBuilders() {
+         ALOGD("Allowing only non-surface-encoder OMX codecs");
+         builders.push_back(&sOmxNoSurfaceEncoderInfoBuilder);
+     }
+-    builders.push_back(GetCodec2InfoBuilder());
++    if (codec2Enabled) builders.push_back(GetCodec2InfoBuilder());
+     return builders;
+ }
+ 
+diff --git a/media/libstagefright/colorconversion/SoftwareRenderer.cpp b/media/libstagefright/colorconversion/SoftwareRenderer.cpp
+index 4711315..adcb333 100644
+--- a/media/libstagefright/colorconversion/SoftwareRenderer.cpp
++++ b/media/libstagefright/colorconversion/SoftwareRenderer.cpp
+@@ -28,6 +28,7 @@
+ #include <ui/GraphicBufferMapper.h>
+ #include <ui/GraphicBuffer.h>
+ #include <ui/Rect.h>
++#include "ga36_yv12_legacy.h"
+ 
+ namespace android {
+ 
+@@ -281,9 +282,31 @@ std::list<FrameRenderTracker::Info> SoftwareRenderer::render(
+          mColorFormat == OMX_COLOR_FormatYUV420SemiPlanar ||
+          mColorFormat == OMX_TI_COLOR_FormatYUV420PackedSemiPlanar ||
+          mColorFormat == OMX_COLOR_FormatYUV420Planar16)) {
+-        CHECK_EQ(0, mapper.lockYCbCr(buf->handle,
++        int lockResult = mapper.lockYCbCr(buf->handle,
+                 GRALLOC_USAGE_SW_READ_NEVER | GRALLOC_USAGE_SW_WRITE_RARELY,
+-                bounds, &ycbcr));
++                bounds, &ycbcr);
++        static const bool ga36Legacy = [] {
++            char name[PROPERTY_VALUE_MAX];
++            property_get("ro.hardware.gralloc", name, "");
++            return !strcmp(name, "ga36");
++        }();
++        // The retained GA36 gralloc supports standard YV12 through lock(),
++        // but predates lock_ycbcr. Keep the normal mapper path on other boards.
++        if (lockResult != 0 && ga36Legacy && buf->format == HAL_PIXEL_FORMAT_YV12 &&
++                mCropTop == 0 && mCropLeft == 0 &&
++                mCropWidth <= buf->width && mCropHeight <= buf->height &&
++                ga36Yv12Geometry(buf->width, buf->height, buf->stride)) {
++            void *planes = nullptr;
++            lockResult = mapper.lock(buf->handle,
++                    GRALLOC_USAGE_SW_READ_NEVER | GRALLOC_USAGE_SW_WRITE_RARELY,
++                    bounds, &planes);
++            if (lockResult == 0 && !ga36Yv12Layout(planes, buf->width, buf->height,
++                                                 buf->stride, &ycbcr)) {
++                mapper.unlock(buf->handle);
++                lockResult = -EINVAL;
++            }
++        }
++        CHECK_EQ(0, lockResult);
+     } else {
+         CHECK_EQ(0, mapper.lock(buf->handle,
+                 GRALLOC_USAGE_SW_READ_NEVER | GRALLOC_USAGE_SW_WRITE_RARELY,

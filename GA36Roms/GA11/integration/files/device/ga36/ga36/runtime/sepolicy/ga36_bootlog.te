@@ -1,0 +1,18 @@
+# Temporary bring-up evidence. No app/user-data access or permissive domain.
+type ga36_bootlog_file, file_type;
+allow kernel ga36_bootlog_file:dir search;
+allow kernel ga36_bootlog_file:file { open read write append getattr };
+allow kernel self:global_capability2_class_set syslog;
+allow kernel kernel:system syslog_read;
+allow init ga36_bootlog_file:dir create_dir_perms;
+allow init ga36_bootlog_file:file create_file_perms;
+allow init ga36_bootlog_file:dir { relabelfrom relabelto };
+allow init ga36_bootlog_file:file { relabelfrom relabelto };
+type_transition init ga36_bootlog_file:file ga36_bootlog_file;
+allow logpersist ga36_bootlog_file:dir search;
+
+# Userdebug bring-up snapshot after framework completion. Read-only; no swap
+# changes are allowed here. init already has standard proc_meminfo access.
+userdebug_or_eng(`
+  allow init proc_swaps:file r_file_perms;
+')

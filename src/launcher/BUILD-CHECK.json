@@ -1,0 +1,11 @@
+{
+  "result": "passed",
+  "public_Java_sources_compile": "passed",
+  "dex_and_unsigned_APK_packaging": "passed",
+  "embedded_game_logo_or_cover_files": 0,
+  "neutral_GA36_icon_only": true,
+  "unsigned_APK_sha256": "27a832cc0b0c0ecccc49947a236ff694d853956eecd662785be955a10a5b22d2",
+  "private_launcher_and_ROM_images_changed": false,
+  "signed_release_APK_or_ROM_built": false,
+  "device_test": "not performed"
+}

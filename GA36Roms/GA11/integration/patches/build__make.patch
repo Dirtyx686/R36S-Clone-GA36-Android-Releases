@@ -1,0 +1,13 @@
+diff --git a/target/product/go_defaults_common.mk b/target/product/go_defaults_common.mk
+index ca171df..c75d779 100644
+--- a/target/product/go_defaults_common.mk
++++ b/target/product/go_defaults_common.mk
+@@ -58,7 +58,7 @@ TARGET_SYSTEM_PROP += \
+ 
+ # use the go specific handheld_core_hardware.xml from frameworks
+ PRODUCT_COPY_FILES += \
+-    frameworks/native/data/etc/go_handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
++    $(if $(filter true,$(GA36_MINIMAL_CONSOLE)),device/ga36/ga36/runtime/ga36-console-hardware.xml,frameworks/native/data/etc/go_handheld_core_hardware.xml):$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
+ 
+ # Dedupe VNDK libraries with identical core variants.
+ TARGET_VNDK_USE_CORE_VARIANT := true

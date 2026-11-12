@@ -1,0 +1,23 @@
+{
+  "result": "passed",
+  "kernel": "K11 #82 GA36 V1.1 common kernel",
+  "Image_bytes": 10317256,
+  "Image_sha256": "61d4a9711fb574cf2be4b302d0b785863e5b14e4434f73642a1975d32ec9fd67",
+  "physical_kernel_end": "0x40b86348",
+  "ramdisk_overlap": false,
+  "config_changes": {
+    "CONFIG_GA36_BINDER_LEGACY": [
+      null,
+      "y"
+    ],
+    "CONFIG_ANDROID_BINDER_DEVICES": [
+      "\"binder,hwbinder,vndbinder\"",
+      "\"binder8,hwbinder,vndbinder\""
+    ]
+  },
+  "retained_module_imports_matched": 377,
+  "public_structure_sizes_offsets_bitfields_identical": true,
+  "binder_7_and_8_isolated": true,
+  "canonical_binder_protocol_selected_once_before_Android": true,
+  "full_Android7_and_Android11_device_boot_verified": false
+}

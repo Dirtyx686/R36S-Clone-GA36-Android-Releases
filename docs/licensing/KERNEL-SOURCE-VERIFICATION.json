@@ -1,0 +1,7 @@
+{
+  "archive": "GA36-Kernel-K11-82-source.tar.gz",
+  "source_files_compared": 42850,
+  "mismatches": [],
+  "source_archive_sha256": "11cdda853e7f7f1742a6b065158af5ff458a594493b61951ba9b31edde5fa93d",
+  "claim": "exact collected K11 source snapshot; retained module correspondence separate"
+}

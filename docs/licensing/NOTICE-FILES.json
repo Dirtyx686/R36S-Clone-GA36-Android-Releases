@@ -1,0 +1,66 @@
+[
+  {
+    "file": "LICENSES/Linux-3.4-COPYING.txt",
+    "bytes": 18693,
+    "sha256": "af8067302947c01fd9eee72befa54c7e3ef8a48fecde7fd71277f2290b2bf0f7"
+  },
+  {
+    "file": "LICENSES/Mali-kernel-GPL-header.txt",
+    "bytes": 838,
+    "sha256": "3654f826f6ef649517f4af71fe57a2010903ef382ebf4ded0a8a2b2bc1db1f48"
+  },
+  {
+    "file": "LICENSES/compiler-rt-LICENSE.txt",
+    "bytes": 4289,
+    "sha256": "415ec2b15961f8b34859a50af386663f552bb62b9fffd69e8eb676c792ea022e"
+  },
+  {
+    "file": "LICENSES/musl-COPYRIGHT.txt",
+    "bytes": 6204,
+    "sha256": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af"
+  },
+  {
+    "file": "LICENSES/e2fsprogs-NOTICE.txt",
+    "bytes": 44585,
+    "sha256": "5da5ef153e559c1d990d4c3eedbedd4442db892d37eae1f35fff069de8ec9020"
+  },
+  {
+    "file": "LICENSES/Go-LICENSE.txt",
+    "bytes": 1453,
+    "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+  },
+  {
+    "file": "LICENSES/GA36-original-code-MIT.txt",
+    "bytes": 1069,
+    "sha256": "0ccc61179affdfeecb5b55695914fa6dce18899cfaf744fb9681a2322e450b6b"
+  },
+  {
+    "file": "LICENSES/Flasher-font-notices.txt",
+    "bytes": 2076,
+    "sha256": "d6181549dabdd2af5f97528b5d719d5b256c194900336b6a73fdf40a8935089f"
+  },
+  {
+    "file": "LICENSES/GA7-embedded-NOTICE.html",
+    "bytes": 1757037,
+    "sha256": "b6dcd00e74307e90e70dcc97d7832cfc6d3574390bd49396c96722633a1b5bad",
+    "compressed_sha256": "4020118ad373d8503600fabb6c99e54ca009fa03c74ce3218bd506b9ca70d77a",
+    "encoding": "verbatim decompressed legacy HTML; contains non-UTF8 bytes, deliberately preserved"
+  },
+  {
+    "file": "LICENSES/GA11-embedded-NOTICE.html",
+    "bytes": 2297162,
+    "sha256": "67274fd2832c22ddb69110d200099be99767d9cf59da885bfc6ff179c7e51987",
+    "compressed_sha256": "43a0ca9d3ce2c9a2b8b270753265a97e257c6c9c1119a6d67b841f630066dc49",
+    "encoding": "verbatim decompressed legacy HTML; contains non-UTF8 bytes, deliberately preserved"
+  },
+  {
+    "file": "LICENSES/Amaze-GPL-3.0.txt",
+    "bytes": 35146,
+    "sha256": "c53a65c2fd561c87eaabf1072ef5dcab8653042bc15308465f52413585eb6271"
+  },
+  {
+    "file": "LICENSES/GA7-original-SDK-license.txt",
+    "bytes": 16962,
+    "sha256": "1f8729233617b193fd619213792ae16a41b95d2bbbf525dfe66998252ba68b16"
+  }
+]

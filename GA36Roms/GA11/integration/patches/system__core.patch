@@ -1,0 +1,921 @@
+diff --git a/init/selinux.cpp b/init/selinux.cpp
+index 5a0255a..4b4db3a 100644
+--- a/init/selinux.cpp
++++ b/init/selinux.cpp
+@@ -685,6 +685,26 @@ int SetupSelinux(char** argv) {
+     SelinuxSetupKernelLogging();
+     SelinuxInitialize();
+ 
++    // GA36 stages exactly three immutable codec XMLs on a private tmpfs before
++    // loading policy. Label that mount while still in the kernel domain:
++    // AOSP deliberately forbids init from relabeling vendor configuration.
++    bool ga36_codec_mount = false;
++    ImportKernelCmdline([&](const std::string& key, const std::string& value) {
++        if (key == "androidboot.hardware" && value == "ga36") ga36_codec_mount = true;
++    });
++    if (ga36_codec_mount) {
++        if (selinux_android_restorecon("/odm/etc", SELINUX_ANDROID_RESTORECON_RECURSE |
++                                                       SELINUX_ANDROID_RESTORECON_SKIP_SEHASH) == -1) {
++            PLOG(ERROR) << "GA36 codec configuration labeling failed before init transition";
++        } else {
++            LOG(INFO) << "GA36_CODEC_CONTEXTS_READY_BEFORE_INIT_TRANSITION";
++        }
++        // Keep optional pointer labeling independent of the retired test watchdog.
++        if (selinux_android_restorecon("/ga36-pointer", 0) == -1) {
++            PLOG(ERROR) << "GA36 optional pointer labeling failed before init transition";
++        }
++    }
++
+     // We're in the kernel domain and want to transition to the init domain.  File systems that
+     // store SELabels in their xattrs, such as ext4 do not need an explicit restorecon here,
+     // but other file systems do.  In particular, this is needed for ramdisks such as the
+diff --git a/libprocessgroup/profiles/cgroups.json b/libprocessgroup/profiles/cgroups.json
+index 4518487..c18d6cf 100644
+--- a/libprocessgroup/profiles/cgroups.json
++++ b/libprocessgroup/profiles/cgroups.json
+@@ -1,12 +1,5 @@
+ {
+   "Cgroups": [
+-    {
+-      "Controller": "blkio",
+-      "Path": "/dev/blkio",
+-      "Mode": "0755",
+-      "UID": "system",
+-      "GID": "system"
+-    },
+     {
+       "Controller": "cpu",
+       "Path": "/dev/cpuctl",
+@@ -27,33 +20,11 @@
+       "GID": "system"
+     },
+     {
+-      "Controller": "memory",
+-      "Path": "/dev/memcg",
+-      "Mode": "0700",
+-      "UID": "root",
+-      "GID": "system"
+-    },
+-    {
+-      "Controller": "schedtune",
+-      "Path": "/dev/stune",
++      "Controller": "freezer",
++      "Path": "/dev/freezer",
+       "Mode": "0755",
+       "UID": "system",
+       "GID": "system"
+     }
+-  ],
+-  "Cgroups2": {
+-    "Path": "/sys/fs/cgroup",
+-    "Mode": "0755",
+-    "UID": "system",
+-    "GID": "system",
+-    "Controllers": [
+-      {
+-        "Controller": "freezer",
+-        "Path": "freezer",
+-        "Mode": "0755",
+-        "UID": "system",
+-        "GID": "system"
+-      }
+-    ]
+-  }
++  ]
+ }
+diff --git a/libprocessgroup/profiles/task_profiles.json b/libprocessgroup/profiles/task_profiles.json
+index c4dbf8e..4130ef3 100644
+--- a/libprocessgroup/profiles/task_profiles.json
++++ b/libprocessgroup/profiles/task_profiles.json
+@@ -15,57 +15,20 @@
+       "Controller": "cpuset",
+       "File": "top-app/cpus"
+     },
+-    {
+-      "Name": "MemLimit",
+-      "Controller": "memory",
+-      "File": "memory.limit_in_bytes"
+-    },
+-    {
+-      "Name": "MemSoftLimit",
+-      "Controller": "memory",
+-      "File": "memory.soft_limit_in_bytes"
+-    },
+-    {
+-      "Name": "MemSwappiness",
+-      "Controller": "memory",
+-      "File": "memory.swappiness"
+-    },
+-    {
+-      "Name": "STuneBoost",
+-      "Controller": "schedtune",
+-      "File": "schedtune.boost"
+-    },
+-    {
+-      "Name": "STunePreferIdle",
+-      "Controller": "schedtune",
+-      "File": "schedtune.prefer_idle"
+-    },
+-    {
+-      "Name": "UClampMin",
+-      "Controller": "cpu",
+-      "File": "cpu.uclamp.min"
+-    },
+-    {
+-      "Name": "UClampMax",
+-      "Controller": "cpu",
+-      "File": "cpu.uclamp.max"
+-    },
+     {
+       "Name": "FreezerState",
+       "Controller": "freezer",
+-      "File": "cgroup.freeze"
++      "File": "freezer.state"
+     }
+   ],
+-
+   "Profiles": [
+     {
+       "Name": "HighEnergySaving",
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "schedtune",
++          "Params": {
++            "Controller": "cpuset",
+             "Path": "background"
+           }
+         }
+@@ -76,10 +39,9 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "freezer",
+-            "Path": ""
++            "Path": "frozen"
+           }
+         }
+       ]
+@@ -89,10 +51,9 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "freezer",
+-            "Path": "../"
++            "Path": ""
+           }
+         }
+       ]
+@@ -102,9 +63,8 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "schedtune",
++          "Params": {
++            "Controller": "cpuset",
+             "Path": ""
+           }
+         }
+@@ -115,9 +75,8 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "schedtune",
++          "Params": {
++            "Controller": "cpuset",
+             "Path": "foreground"
+           }
+         }
+@@ -128,9 +87,8 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "schedtune",
++          "Params": {
++            "Controller": "cpuset",
+             "Path": "top-app"
+           }
+         }
+@@ -141,9 +99,8 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "schedtune",
++          "Params": {
++            "Controller": "cpuset",
+             "Path": "rt"
+           }
+         }
+@@ -154,49 +111,27 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "schedtune",
+-            "Path": "camera-daemon"
++          "Params": {
++            "Controller": "cpuset",
++            "Path": "foreground"
+           }
+         }
+       ]
+     },
+-
+     {
+       "Name": "CpuPolicySpread",
+-      "Actions": [
+-        {
+-          "Name": "SetAttribute",
+-          "Params":
+-          {
+-            "Name": "STunePreferIdle",
+-            "Value": "1"
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+     {
+       "Name": "CpuPolicyPack",
+-      "Actions": [
+-        {
+-          "Name": "SetAttribute",
+-          "Params":
+-          {
+-            "Name": "STunePreferIdle",
+-            "Value": "0"
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+-
+     {
+       "Name": "VrKernelCapacity",
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+             "Path": ""
+           }
+@@ -208,10 +143,9 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+-            "Path": "system/background"
++            "Path": "system-background"
+           }
+         }
+       ]
+@@ -221,10 +155,9 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+-            "Path": "system"
++            "Path": ""
+           }
+         }
+       ]
+@@ -234,10 +167,9 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+-            "Path": "system/performance"
++            "Path": "foreground"
+           }
+         }
+       ]
+@@ -247,10 +179,9 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+-            "Path": "application/background"
++            "Path": "background"
+           }
+         }
+       ]
+@@ -260,10 +191,9 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+-            "Path": "application"
++            "Path": ""
+           }
+         }
+       ]
+@@ -273,22 +203,19 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+-            "Path": "application/performance"
++            "Path": "foreground"
+           }
+         }
+       ]
+     },
+-
+     {
+       "Name": "ProcessCapacityLow",
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+             "Path": "background"
+           }
+@@ -300,8 +227,7 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+             "Path": ""
+           }
+@@ -313,8 +239,7 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+             "Path": "foreground"
+           }
+@@ -326,22 +251,19 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+             "Path": "top-app"
+           }
+         }
+       ]
+     },
+-
+     {
+       "Name": "ServiceCapacityLow",
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+             "Path": "system-background"
+           }
+@@ -353,89 +275,47 @@
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+             "Path": "restricted"
+           }
+         }
+       ]
+     },
+-
+     {
+       "Name": "CameraServiceCapacity",
+       "Actions": [
+         {
+           "Name": "JoinCgroup",
+-          "Params":
+-          {
++          "Params": {
+             "Controller": "cpuset",
+-            "Path": "camera-daemon"
++            "Path": "foreground"
+           }
+         }
+       ]
+     },
+-
+     {
+       "Name": "LowIoPriority",
+-      "Actions": [
+-        {
+-          "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "blkio",
+-            "Path": "background"
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+     {
+       "Name": "NormalIoPriority",
+-      "Actions": [
+-        {
+-          "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "blkio",
+-            "Path": ""
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+     {
+       "Name": "HighIoPriority",
+-      "Actions": [
+-        {
+-          "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "blkio",
+-            "Path": ""
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+     {
+       "Name": "MaxIoPriority",
+-      "Actions": [
+-        {
+-          "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "blkio",
+-            "Path": ""
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+-
+     {
+       "Name": "TimerSlackHigh",
+       "Actions": [
+         {
+           "Name": "SetTimerSlack",
+-          "Params":
+-          {
++          "Params": {
+             "Slack": "40000000"
+           }
+         }
+@@ -446,21 +326,18 @@
+       "Actions": [
+         {
+           "Name": "SetTimerSlack",
+-          "Params":
+-          {
++          "Params": {
+             "Slack": "50000"
+           }
+         }
+       ]
+     },
+-
+     {
+       "Name": "PerfBoost",
+       "Actions": [
+         {
+           "Name": "SetClamps",
+-          "Params":
+-          {
++          "Params": {
+             "Boost": "50%",
+             "Clamp": "0"
+           }
+@@ -472,80 +349,33 @@
+       "Actions": [
+         {
+           "Name": "SetClamps",
+-          "Params":
+-          {
++          "Params": {
+             "Boost": "0",
+             "Clamp": "30%"
+           }
+         }
+       ]
+     },
+-
+     {
+       "Name": "LowMemoryUsage",
+-      "Actions": [
+-        {
+-          "Name": "SetAttribute",
+-          "Params":
+-          {
+-            "Name": "MemSoftLimit",
+-            "Value": "16MB"
+-          }
+-        },
+-        {
+-          "Name": "SetAttribute",
+-          "Params":
+-          {
+-            "Name": "MemSwappiness",
+-            "Value": "150"
+-
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+     {
+       "Name": "HighMemoryUsage",
+-      "Actions": [
+-        {
+-          "Name": "SetAttribute",
+-          "Params":
+-          {
+-            "Name": "MemSoftLimit",
+-            "Value": "512MB"
+-          }
+-        },
+-        {
+-          "Name": "SetAttribute",
+-          "Params":
+-          {
+-            "Name": "MemSwappiness",
+-            "Value": "100"
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+     {
+       "Name": "SystemMemoryProcess",
+-      "Actions": [
+-        {
+-          "Name": "JoinCgroup",
+-          "Params":
+-          {
+-            "Controller": "memory",
+-            "Path": "system"
+-          }
+-        }
+-      ]
++      "Actions": []
+     },
+     {
+       "Name": "FreezerDisabled",
+       "Actions": [
+         {
+-          "Name": "SetAttribute",
+-          "Params":
+-          {
+-            "Name": "FreezerState",
+-            "Value": "0"
++          "Name": "JoinCgroup",
++          "Params": {
++            "Controller": "freezer",
++            "Path": ""
+           }
+         }
+       ]
+@@ -554,61 +384,100 @@
+       "Name": "FreezerEnabled",
+       "Actions": [
+         {
+-          "Name": "SetAttribute",
+-          "Params":
+-          {
+-            "Name": "FreezerState",
+-            "Value": "1"
++          "Name": "JoinCgroup",
++          "Params": {
++            "Controller": "freezer",
++            "Path": "frozen"
+           }
+         }
+       ]
+     }
+   ],
+-
+   "AggregateProfiles": [
+     {
+       "Name": "SCHED_SP_DEFAULT",
+-      "Profiles": [ "TimerSlackNormal" ]
++      "Profiles": [
++        "TimerSlackNormal"
++      ]
+     },
+     {
+       "Name": "SCHED_SP_BACKGROUND",
+-      "Profiles": [ "HighEnergySaving", "LowIoPriority", "TimerSlackHigh" ]
++      "Profiles": [
++        "HighEnergySaving",
++        "LowIoPriority",
++        "TimerSlackHigh"
++      ]
+     },
+     {
+       "Name": "SCHED_SP_FOREGROUND",
+-      "Profiles": [ "HighPerformance", "HighIoPriority", "TimerSlackNormal" ]
++      "Profiles": [
++        "HighPerformance",
++        "HighIoPriority",
++        "TimerSlackNormal"
++      ]
+     },
+     {
+       "Name": "SCHED_SP_TOP_APP",
+-      "Profiles": [ "MaxPerformance", "MaxIoPriority", "TimerSlackNormal" ]
++      "Profiles": [
++        "MaxPerformance",
++        "MaxIoPriority",
++        "TimerSlackNormal"
++      ]
+     },
+     {
+       "Name": "SCHED_SP_RT_APP",
+-      "Profiles": [ "RealtimePerformance", "MaxIoPriority", "TimerSlackNormal" ]
++      "Profiles": [
++        "RealtimePerformance",
++        "MaxIoPriority",
++        "TimerSlackNormal"
++      ]
+     },
+     {
+       "Name": "CPUSET_SP_DEFAULT",
+-      "Profiles": [ "TimerSlackNormal" ]
++      "Profiles": [
++        "TimerSlackNormal"
++      ]
+     },
+     {
+       "Name": "CPUSET_SP_BACKGROUND",
+-      "Profiles": [ "HighEnergySaving", "ProcessCapacityLow", "LowIoPriority", "TimerSlackHigh" ]
++      "Profiles": [
++        "HighEnergySaving",
++        "ProcessCapacityLow",
++        "LowIoPriority",
++        "TimerSlackHigh"
++      ]
+     },
+     {
+       "Name": "CPUSET_SP_FOREGROUND",
+-      "Profiles": [ "HighPerformance", "ProcessCapacityHigh", "HighIoPriority", "TimerSlackNormal" ]
++      "Profiles": [
++        "HighPerformance",
++        "ProcessCapacityHigh",
++        "HighIoPriority",
++        "TimerSlackNormal"
++      ]
+     },
+     {
+       "Name": "CPUSET_SP_TOP_APP",
+-      "Profiles": [ "MaxPerformance", "ProcessCapacityMax", "MaxIoPriority", "TimerSlackNormal" ]
++      "Profiles": [
++        "MaxPerformance",
++        "ProcessCapacityMax",
++        "MaxIoPriority",
++        "TimerSlackNormal"
++      ]
+     },
+     {
+       "Name": "CPUSET_SP_SYSTEM",
+-      "Profiles": [ "ServiceCapacityLow", "TimerSlackNormal" ]
++      "Profiles": [
++        "ServiceCapacityLow",
++        "TimerSlackNormal"
++      ]
+     },
+     {
+       "Name": "CPUSET_SP_RESTRICTED",
+-      "Profiles": [ "ServiceCapacityRestricted", "TimerSlackNormal" ]
++      "Profiles": [
++        "ServiceCapacityRestricted",
++        "TimerSlackNormal"
++      ]
+     }
+   ]
+ }
+diff --git a/rootdir/init.rc b/rootdir/init.rc
+index a9af0b0..77380f5 100644
+--- a/rootdir/init.rc
++++ b/rootdir/init.rc
+@@ -30,12 +30,8 @@ on early-init
+     mkdir /acct/uid
+ 
+     # memory.pressure_level used by lmkd
+-    chown root system /dev/memcg/memory.pressure_level
+-    chmod 0040 /dev/memcg/memory.pressure_level
+     # app mem cgroups, used by activity manager, lmkd and zygote
+-    mkdir /dev/memcg/apps/ 0755 system system
+     # cgroup for system_server and surfaceflinger
+-    mkdir /dev/memcg/system 0550 system system
+ 
+     # symlink the Android specific /dev/tun to Linux expected /dev/net/tun
+     mkdir /dev/net 0755 root root
+@@ -123,48 +119,12 @@ on init
+     symlink /proc/self/fd/2 /dev/stderr
+ 
+     # Create energy-aware scheduler tuning nodes
+-    mkdir /dev/stune/foreground
+-    mkdir /dev/stune/background
+-    mkdir /dev/stune/top-app
+-    mkdir /dev/stune/rt
+-    chown system system /dev/stune
+-    chown system system /dev/stune/foreground
+-    chown system system /dev/stune/background
+-    chown system system /dev/stune/top-app
+-    chown system system /dev/stune/rt
+-    chown system system /dev/stune/tasks
+-    chown system system /dev/stune/foreground/tasks
+-    chown system system /dev/stune/background/tasks
+-    chown system system /dev/stune/top-app/tasks
+-    chown system system /dev/stune/rt/tasks
+-    chmod 0664 /dev/stune/tasks
+-    chmod 0664 /dev/stune/foreground/tasks
+-    chmod 0664 /dev/stune/background/tasks
+-    chmod 0664 /dev/stune/top-app/tasks
+-    chmod 0664 /dev/stune/rt/tasks
+ 
+     # Create an stune group for NNAPI HAL processes
+-    mkdir /dev/stune/nnapi-hal
+-    chown system system /dev/stune/nnapi-hal
+-    chown system system /dev/stune/nnapi-hal/tasks
+-    chmod 0664 /dev/stune/nnapi-hal/tasks
+-    write /dev/stune/nnapi-hal/schedtune.boost 1
+-    write /dev/stune/nnapi-hal/schedtune.prefer_idle 1
+ 
+     # Create blkio group and apply initial settings.
+     # This feature needs kernel to support it, and the
+     # device's init.rc must actually set the correct values.
+-    mkdir /dev/blkio/background
+-    chown system system /dev/blkio
+-    chown system system /dev/blkio/background
+-    chown system system /dev/blkio/tasks
+-    chown system system /dev/blkio/background/tasks
+-    chmod 0664 /dev/blkio/tasks
+-    chmod 0664 /dev/blkio/background/tasks
+-    write /dev/blkio/blkio.weight 1000
+-    write /dev/blkio/background/blkio.weight 200
+-    write /dev/blkio/blkio.group_idle 0
+-    write /dev/blkio/background/blkio.group_idle 0
+ 
+     restorecon_recursive /mnt
+ 
+diff --git a/toolbox/Android.bp b/toolbox/Android.bp
+index 4ca5f5a..81dcce6 100644
+--- a/toolbox/Android.bp
++++ b/toolbox/Android.bp
+@@ -33,6 +33,7 @@ cc_defaults {
+     ],
+     shared_libs: [
+         "libbase",
++        "liblog",
+     ],
+     static_libs: [
+         "libmodprobe",
+diff --git a/toolbox/getevent.c b/toolbox/getevent.c
+index e2c77c3..a527458 100644
+--- a/toolbox/getevent.c
++++ b/toolbox/getevent.c
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <android/log.h>
++
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdint.h>
+@@ -309,6 +311,32 @@ static void print_hid_descriptor(int bus, int vendor, int product)
+     closedir(dir);
+ }
+ 
++static int ga36_log;
++static unsigned ga36_keys_logged, ga36_axes_logged;
++static int ga36_values[4];
++static int64_t ga36_last_axis;
++static int ga36_axes_dirty;
++static void ga36_trace_event(const struct input_event* event) {
++    if (!ga36_log) return;
++    if (event->type == EV_ABS) {
++        int index = event->code == ABS_X ? 0 : event->code == ABS_Y ? 1 :
++                event->code == ABS_RX ? 2 : event->code == ABS_RY ? 3 : -1;
++        if (index >= 0) { ga36_values[index] = event->value; ga36_axes_dirty = 1; }
++    } else if (event->type == EV_KEY && ga36_keys_logged < 256) {
++        ++ga36_keys_logged;
++        __android_log_print(ANDROID_LOG_INFO, "GA36Raw", "KEY scan=%u value=%d",
++                            event->code, event->value);
++    } else if (event->type == EV_SYN && event->code == SYN_REPORT && ga36_axes_logged < 256) {
++        int64_t now = (int64_t)event->time.tv_sec * 1000000 + event->time.tv_usec;
++        if (ga36_axes_dirty && now - ga36_last_axis >= 200000) {
++            ga36_axes_dirty = 0;
++            ga36_last_axis = now; ++ga36_axes_logged;
++            __android_log_print(ANDROID_LOG_INFO, "GA36Raw", "AXES X=%d Y=%d Z=%d RZ=%d",
++                                ga36_values[0], ga36_values[1], ga36_values[2], ga36_values[3]);
++        }
++    }
++}
++
+ static int open_device(const char *device, int print_flags)
+ {
+     int version;
+@@ -345,6 +373,23 @@ static int open_device(const char *device, int print_flags)
+         //fprintf(stderr, "could not get device name for %s, %s\n", device, strerror(errno));
+         name[0] = '\0';
+     }
++    if (ga36_log) {
++        if (strcmp(name, "micro_gamepad")) {
++            __android_log_print(ANDROID_LOG_WARN, "GA36Raw", "REFUSED_OTHER_DEVICE %s", name);
++            close(fd); return -1;
++        }
++        __android_log_print(ANDROID_LOG_INFO, "GA36Raw", "OPEN name=%s path=%s", name, device);
++        /* The retained GA36 module reports Linux ABS_RX/ABS_RY (3/4).
++         * Its keylayout maps these to Android AXIS_Z/AXIS_RZ. */
++        const int axes[] = { ABS_X, ABS_Y, ABS_RX, ABS_RY };
++        for (unsigned a = 0; a < 4; ++a) {
++            struct input_absinfo info;
++            if (ioctl(fd, EVIOCGABS(axes[a]), &info) == 0) {
++                ga36_values[a] = info.value;
++                __android_log_print(ANDROID_LOG_INFO, "GA36Raw", "RANGE axis=%d min=%d max=%d flat=%d value=%d", axes[a], info.minimum, info.maximum, info.flat, info.value);
++            }
++        }
++    }
+     if(ioctl(fd, EVIOCGPHYS(sizeof(location) - 1), &location) < 1) {
+         //fprintf(stderr, "could not get location for %s, %s\n", device, strerror(errno));
+         location[0] = '\0';
+@@ -535,10 +580,12 @@ int getevent_main(int argc, char *argv[])
+ 
+     opterr = 0;
+     do {
+-        c = getopt(argc, argv, "tns:Sv::dpilqc:rh");
++        c = getopt(argc, argv, "Gtns:Sv::dpilqc:rh");
+         if (c == EOF)
+             break;
+         switch (c) {
++        case 'G':
++            ga36_log = 1; break;
+         case 't':
+             get_time = 1;
+             break;
+@@ -606,6 +653,7 @@ int getevent_main(int argc, char *argv[])
+         device = argv[optind];
+         optind++;
+     }
++    if (ga36_log && !device) { fprintf(stderr, "-G requires one explicit controller path\n"); return 1; }
+     if (optind != argc) {
+         usage(argv[0]);
+         exit(1);
+@@ -673,6 +721,7 @@ int getevent_main(int argc, char *argv[])
+                     }
+                     if(print_device)
+                         printf("%s: ", device_names[i]);
++                    ga36_trace_event(&event);
+                     print_event(event.type, event.code, event.value, print_flags);
+                     if(sync_rate && event.type == 0 && event.code == 0) {
+                         int64_t now = event.time.tv_sec * 1000000LL + event.time.tv_usec;

@@ -1,0 +1,299 @@
+diff --git a/res/layout/settings_homepage_container.xml b/res/layout/settings_homepage_container.xml
+index f210c54..ad9751d 100644
+--- a/res/layout/settings_homepage_container.xml
++++ b/res/layout/settings_homepage_container.xml
+@@ -25,6 +25,7 @@
+ 
+     <androidx.core.widget.NestedScrollView
+         android:id="@+id/main_content_scrollable_container"
++        android:fillViewport="true"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         app:layout_behavior="com.android.settings.widget.FloatingAppBarScrollingViewBehavior">
+@@ -32,7 +33,7 @@
+         <LinearLayout
+             android:id="@+id/homepage_container"
+             android:layout_width="match_parent"
+-            android:layout_height="wrap_content"
++            android:layout_height="match_parent"
+             android:orientation="vertical">
+ 
+             <FrameLayout
+@@ -45,7 +46,8 @@
+             <FrameLayout
+                 android:id="@+id/main_content"
+                 android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
++                android:layout_height="0dp"
++                android:layout_weight="1"
+                 android:animateLayoutChanges="true"
+                 android:background="?android:attr/windowBackground"/>
+ 
+diff --git a/res/xml/system_dashboard_fragment.xml b/res/xml/system_dashboard_fragment.xml
+index 88b8d2f..a27f483 100644
+--- a/res/xml/system_dashboard_fragment.xml
++++ b/res/xml/system_dashboard_fragment.xml
+@@ -76,4 +76,13 @@
+                 android:targetClass="@string/additional_system_update_menu"/>
+     </Preference>
+ 
++    <!-- Console information remains reachable by D-pad from System as well. -->
++    <Preference
++        android:key="ga36_about_device"
++        android:title="@string/about_settings"
++        android:summary="@string/about_settings_summary"
++        android:icon="@drawable/ic_homepage_about"
++        android:order="20"
++        android:fragment="com.android.settings.deviceinfo.aboutphone.MyDeviceInfoFragment"/>
++
+ </PreferenceScreen>
+\ No newline at end of file
+diff --git a/res/xml/top_level_settings.xml b/res/xml/top_level_settings.xml
+index 367f426..38185b8 100644
+--- a/res/xml/top_level_settings.xml
++++ b/res/xml/top_level_settings.xml
+@@ -136,11 +136,10 @@
+     <Preference
+         android:key="top_level_about_device"
+         android:title="@string/about_settings"
+-        android:summary="@string/summary_placeholder"
++        android:summary="@string/about_settings_summary"
+         android:icon="@drawable/ic_homepage_about"
+-        android:order="20"
+-        android:fragment="com.android.settings.deviceinfo.aboutphone.MyDeviceInfoFragment"
+-        settings:controller="com.android.settings.deviceinfo.aboutphone.TopLevelAboutDevicePreferenceController"/>
++        android:order="9"
++        android:fragment="com.android.settings.deviceinfo.aboutphone.MyDeviceInfoFragment"/>
+ 
+     <Preference
+         android:key="top_level_support"
+diff --git a/src/com/android/settings/development/WifiScanThrottlingPreferenceController.java b/src/com/android/settings/development/WifiScanThrottlingPreferenceController.java
+index 2632691..455e985 100644
+--- a/src/com/android/settings/development/WifiScanThrottlingPreferenceController.java
++++ b/src/com/android/settings/development/WifiScanThrottlingPreferenceController.java
+@@ -36,6 +36,11 @@ public class WifiScanThrottlingPreferenceController extends DeveloperOptionsPref
+         mWifiManager = context.getSystemService(WifiManager.class);
+     }
+ 
++    @Override
++    public boolean isAvailable() {
++        return mWifiManager != null;
++    }
++
+     @Override
+     public String getPreferenceKey() {
+         return WIFI_SCAN_THROTTLING_KEY;
+@@ -43,6 +48,7 @@ public class WifiScanThrottlingPreferenceController extends DeveloperOptionsPref
+ 
+     @Override
+     public boolean onPreferenceChange(Preference preference, Object newValue) {
++        if (mWifiManager == null || !(newValue instanceof Boolean)) return false;
+         final boolean isEnabled = (Boolean) newValue;
+         mWifiManager.setScanThrottleEnabled(isEnabled);
+         return true;
+@@ -50,11 +56,13 @@ public class WifiScanThrottlingPreferenceController extends DeveloperOptionsPref
+ 
+     @Override
+     public void updateState(Preference preference) {
+-        ((SwitchPreference) mPreference).setChecked(mWifiManager.isScanThrottleEnabled());
++        if (mWifiManager == null || !(preference instanceof SwitchPreference)) return;
++        ((SwitchPreference) preference).setChecked(mWifiManager.isScanThrottleEnabled());
+     }
+ 
+     @Override
+     protected void onDeveloperOptionsSwitchDisabled() {
++        if (mWifiManager == null || !(mPreference instanceof SwitchPreference)) return;
+         super.onDeveloperOptionsSwitchDisabled();
+         mWifiManager.setScanThrottleEnabled(true);
+         ((SwitchPreference) mPreference).setChecked(true);
+diff --git a/src/com/android/settings/development/WifiVerboseLoggingPreferenceController.java b/src/com/android/settings/development/WifiVerboseLoggingPreferenceController.java
+index 92ed65d..f597d80 100644
+--- a/src/com/android/settings/development/WifiVerboseLoggingPreferenceController.java
++++ b/src/com/android/settings/development/WifiVerboseLoggingPreferenceController.java
+@@ -44,6 +44,11 @@ public class WifiVerboseLoggingPreferenceController extends DeveloperOptionsPref
+         mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+     }
+ 
++    @Override
++    public boolean isAvailable() {
++        return mWifiManager != null;
++    }
++
+     @Override
+     public String getPreferenceKey() {
+         return WIFI_VERBOSE_LOGGING_KEY;
+@@ -51,6 +56,7 @@ public class WifiVerboseLoggingPreferenceController extends DeveloperOptionsPref
+ 
+     @Override
+     public boolean onPreferenceChange(Preference preference, Object newValue) {
++        if (mWifiManager == null || !(newValue instanceof Boolean)) return false;
+         final boolean isEnabled = (Boolean) newValue;
+         mWifiManager.setVerboseLoggingEnabled(isEnabled);
+         return true;
+@@ -58,13 +64,15 @@ public class WifiVerboseLoggingPreferenceController extends DeveloperOptionsPref
+ 
+     @Override
+     public void updateState(Preference preference) {
++        if (mWifiManager == null || !(preference instanceof SwitchPreference)) return;
+         final boolean enabled = mWifiManager.isVerboseLoggingEnabled();
+-        ((SwitchPreference) mPreference).setChecked(enabled);
++        ((SwitchPreference) preference).setChecked(enabled);
+ 
+     }
+ 
+     @Override
+     protected void onDeveloperOptionsSwitchDisabled() {
++        if (mWifiManager == null || !(mPreference instanceof SwitchPreference)) return;
+         super.onDeveloperOptionsSwitchDisabled();
+         mWifiManager.setVerboseLoggingEnabled(false);
+         ((SwitchPreference) mPreference).setChecked(false);
+diff --git a/src/com/android/settings/deviceinfo/DeviceNamePreferenceController.java b/src/com/android/settings/deviceinfo/DeviceNamePreferenceController.java
+index 6ada11b..db74191 100644
+--- a/src/com/android/settings/deviceinfo/DeviceNamePreferenceController.java
++++ b/src/com/android/settings/deviceinfo/DeviceNamePreferenceController.java
+@@ -55,9 +55,13 @@ public class DeviceNamePreferenceController extends BasePreferenceController
+     public DeviceNamePreferenceController(Context context, String key) {
+         super(context, key);
+ 
+-        mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
++        mWifiManager = context.getPackageManager().hasSystemFeature(
++                android.content.pm.PackageManager.FEATURE_WIFI)
++                ? (WifiManager) context.getSystemService(Context.WIFI_SERVICE) : null;
+         mWifiDeviceNameTextValidator = new WifiDeviceNameTextValidator();
+-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
++        mBluetoothAdapter = context.getPackageManager().hasSystemFeature(
++                android.content.pm.PackageManager.FEATURE_BLUETOOTH)
++                ? BluetoothAdapter.getDefaultAdapter() : null;
+ 
+         initializeDeviceName();
+     }
+@@ -160,6 +164,7 @@ public class DeviceNamePreferenceController extends BasePreferenceController
+     }
+ 
+     private void setTetherSsidName(String deviceName) {
++        if (mWifiManager == null) return;
+         final SoftApConfiguration config = mWifiManager.getSoftApConfiguration();
+         // TODO: If tether is running, turn off the AP and restart it after setting config.
+         mWifiManager.setSoftApConfiguration(
+diff --git a/src/com/android/settings/deviceinfo/WifiMacAddressPreferenceController.java b/src/com/android/settings/deviceinfo/WifiMacAddressPreferenceController.java
+index c700596..6f9c1d5 100644
+--- a/src/com/android/settings/deviceinfo/WifiMacAddressPreferenceController.java
++++ b/src/com/android/settings/deviceinfo/WifiMacAddressPreferenceController.java
+@@ -17,6 +17,8 @@
+ package com.android.settings.deviceinfo;
+ 
+ import android.content.Context;
++import android.content.pm.PackageManager;
++import android.net.wifi.WifiManager;
+ 
+ import com.android.settings.R;
+ import com.android.settings.core.PreferenceControllerMixin;
+@@ -34,8 +36,15 @@ public class WifiMacAddressPreferenceController extends AbstractWifiMacAddressPr
+ 
+     @Override
+     public boolean isAvailable() {
+-        return mContext.getResources().getBoolean(R.bool.config_show_wifi_mac_address);
++        return mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI)
++                && mContext.getSystemService(WifiManager.class) != null
++                && mContext.getResources().getBoolean(R.bool.config_show_wifi_mac_address);
+     }
+ 
+-    // This space intentionally left blank
++    @Override
++    protected void updateConnectivity() {
++        if (isAvailable()) {
++            super.updateConnectivity();
++        }
++    }
+ }
+diff --git a/src/com/android/settings/homepage/SettingsHomepageActivity.java b/src/com/android/settings/homepage/SettingsHomepageActivity.java
+index 6156794..eccfdcf 100644
+--- a/src/com/android/settings/homepage/SettingsHomepageActivity.java
++++ b/src/com/android/settings/homepage/SettingsHomepageActivity.java
+@@ -22,6 +22,7 @@ import android.app.settings.SettingsEnums;
+ import android.os.Bundle;
+ import android.util.Log;
+ import android.view.View;
++import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+ import android.widget.ImageView;
+ import android.widget.Toolbar;
+@@ -102,8 +103,10 @@ public class SettingsHomepageActivity extends FragmentActivity {
+         final int paddingTop = searchBarHeight + searchBarMargin * 2;
+         view.setPadding(0 /* left */, paddingTop, 0 /* right */, 0 /* bottom */);
+ 
+-        // Prevent inner RecyclerView gets focus and invokes scrolling.
+-        view.setFocusableInTouchMode(true);
+-        view.requestFocus();
++        // GA36 uses a D-pad: focus the selectable preferences, not their container.
++        // Keeping the container focused makes arrows scroll without selecting a row.
++        view.setFocusableInTouchMode(false);
++        view.setFocusable(false);
++        ((ViewGroup) view).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+     }
+ }
+diff --git a/src/com/android/settings/wifi/WifiMasterSwitchPreferenceController.java b/src/com/android/settings/wifi/WifiMasterSwitchPreferenceController.java
+index 1e18c59..5345bf9 100644
+--- a/src/com/android/settings/wifi/WifiMasterSwitchPreferenceController.java
++++ b/src/com/android/settings/wifi/WifiMasterSwitchPreferenceController.java
+@@ -59,7 +59,9 @@ public class WifiMasterSwitchPreferenceController extends AbstractPreferenceCont
+ 
+     @Override
+     public boolean isAvailable() {
+-        return mContext.getResources().getBoolean(R.bool.config_show_wifi_settings);
++        return mContext.getPackageManager().hasSystemFeature(
++                android.content.pm.PackageManager.FEATURE_WIFI)
++                && mContext.getResources().getBoolean(R.bool.config_show_wifi_settings);
+     }
+ 
+     @Override
+@@ -85,6 +87,7 @@ public class WifiMasterSwitchPreferenceController extends AbstractPreferenceCont
+ 
+     @Override
+     public void onStart() {
++        if (!isAvailable() || mWifiPreference == null) return;
+         mWifiEnabler = new WifiEnabler(mContext, new MasterSwitchController(mWifiPreference),
+             mMetricsFeatureProvider);
+     }
+diff --git a/src/com/android/settings/wifi/WifiSummaryUpdater.java b/src/com/android/settings/wifi/WifiSummaryUpdater.java
+index c559e7d..bc39cf0 100644
+--- a/src/com/android/settings/wifi/WifiSummaryUpdater.java
++++ b/src/com/android/settings/wifi/WifiSummaryUpdater.java
+@@ -18,6 +18,7 @@ package com.android.settings.wifi;
+ 
+ import android.content.BroadcastReceiver;
+ import android.content.Context;
++import android.content.pm.PackageManager;
+ import android.content.Intent;
+ import android.content.IntentFilter;
+ import android.net.ConnectivityManager;
+@@ -57,6 +58,12 @@ public final class WifiSummaryUpdater extends SummaryUpdater {
+     public WifiSummaryUpdater(Context context, OnSummaryChangeListener listener,
+         WifiStatusTracker wifiTracker) {
+         super(context, listener);
++        if (wifiTracker == null && !context.getPackageManager().hasSystemFeature(
++                PackageManager.FEATURE_WIFI)) {
++            mWifiTracker = null;
++            mReceiver = null;
++            return;
++        }
+         mWifiTracker = wifiTracker != null ? wifiTracker :
+                 new WifiStatusTracker(context, context.getSystemService(WifiManager.class),
+                 context.getSystemService(NetworkScoreManager.class),
+@@ -73,6 +80,7 @@ public final class WifiSummaryUpdater extends SummaryUpdater {
+ 
+     @Override
+     public void register(boolean register) {
++        if (mWifiTracker == null) return;
+         if (register) {
+             notifyChangeIfNeeded();
+             mContext.registerReceiver(mReceiver, INTENT_FILTER);
+@@ -84,7 +92,7 @@ public final class WifiSummaryUpdater extends SummaryUpdater {
+ 
+     @Override
+     public String getSummary() {
+-        if (!mWifiTracker.enabled) {
++        if (mWifiTracker == null || !mWifiTracker.enabled) {
+             return mContext.getString(R.string.switch_off_text);
+         }
+         if (!mWifiTracker.connected) {

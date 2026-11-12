@@ -1,0 +1,47 @@
+{
+  "english_system_derivative": {
+    "status": "passed",
+    "launcher_versionCode": 102,
+    "launcher_sha256": "e388bcb838bbdc816cf49144530f0b30d54a4feed3b22221b75418d89eb4288a",
+    "original_certificate_retained": true,
+    "android11_source_sha256": "7906d609c3c43dce8430c825e3b58d5dab218493f658c6f33717100bd3bc28ca",
+    "android11_sha256": "1c0e3486912f22042efc1cf7c201281c9bda30fe400561d00b54efd4b0c90026",
+    "android7_source_sha256": "c27d0e5e0302cd1dc8cfde588ef1dd8567967b5e6da6cda7febcd22725ff178b",
+    "android7_sha256": "c0aefd7e901297e78134c72f81bf9659892dd97423fa97ae2346950c62454e78",
+    "android7_all_UID_GID_modes_preserved": 1578,
+    "apk_readback_both": "passed",
+    "default_locale": "en-US",
+    "launcher_languages": [
+      "en",
+      "de"
+    ],
+    "system_binary_changes": [
+      "GA36Home.apk"
+    ],
+    "device_test": "pending"
+  },
+  "os": "7",
+  "base": "P39",
+  "kernel": "K11 #82",
+  "clean_userdata": true,
+  "games_included": false,
+  "accounts_included": false,
+  "compressed_bytes": 624132441,
+  "manifest": {
+    "version": "Beta V1 \u00b7 P39 Clean",
+    "os": "7",
+    "compressed_sha256": "da8d449ec2b3feb638100b0f882ef342e684c460c3cebc10ece934a73ef38f66",
+    "image_sha256": "046582d8c7e39cebf0ff9644fb0adfe32b4f706e93278bd21bd56125d1156b03",
+    "header_sha256": "edf5f9accc52b0bd39b4f745d3988ad6a6a902ee9c4c7a01369d3cb247d61ebd",
+    "image_bytes": 31138512896,
+    "board": "GA36 Allwinner A33,512MB RAM",
+    "layout": "GA36-clean-v2",
+    "zram_mib": 256,
+    "sd_swap_gib": 4
+  },
+  "full_decompression_readback": "passed",
+  "all_created_filesystems": "e2fsck passed",
+  "swap_no_holes_verified": true,
+  "startup_root_sha256": "921f7a7198b063f22faec3db0be675d15d5ae4bbf5102d3e453102d2a9a9423b",
+  "native_boot_validation": "ARM selftests passed; physical device test pending"
+}

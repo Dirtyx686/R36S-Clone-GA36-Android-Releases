@@ -1,0 +1,16 @@
+android_app_import {
+    name: "GA36Home",
+    apk: "GA36Home.apk",
+    // Sign after zip/dex transformations so APK signatures remain valid.
+    certificate: ":ga36_home_dev_certificate",
+    privileged: true,
+    // Console image: omit optional end-user apps, retain framework/providers.
+    overrides: ["Email", "Exchange2", "ExactCalculator", "Backgrounds", "Eleven", "Etar", "Jelly", "Seedvault", "AudioFX", "Browser2", "Calendar", "Contacts", "DeskClock", "Gallery2", "Music", "Camera2", "QuickSearchBox", "QuickAccessWallet", "LineageSetupWizard", "Updater", "ThemePicker", "PrintSpooler"],
+    dex_preopt: { enabled: true },
+}
+
+// Local development certificate; no private key is installed in system images.
+android_app_certificate {
+    name: "ga36_home_dev_certificate",
+    certificate: "keys/ga36-home",
+}

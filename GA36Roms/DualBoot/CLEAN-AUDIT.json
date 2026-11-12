@@ -1,0 +1,50 @@
+{
+  "GA7_userdata_root": [
+    ".",
+    "..",
+    "lost+found",
+    "ga36-memory"
+  ],
+  "GA7_userdata_root_label": "system_data_file",
+  "GA7_root_locale": "en-US",
+  "GA11_userdata_root": [
+    ".",
+    "..",
+    "lost+found",
+    "ga36-memory"
+  ],
+  "GA11_userdata_root_label": "system_data_root_file",
+  "GA11_root_locale": "en-US",
+  "GA7_game_APKs": [],
+  "swap_allocated_logical_blocks": 1048576,
+  "ga36-android7/data.img": {
+    "bytes": 25769803776,
+    "uid": 0,
+    "gid": 0,
+    "mode": "0600",
+    "links": 1
+  },
+  "ga36-android11/data.img": {
+    "bytes": 25769803776,
+    "uid": 0,
+    "gid": 0,
+    "mode": "0600",
+    "links": 1
+  },
+  "ga36-android11/system.img": {
+    "bytes": 2147483648,
+    "uid": 0,
+    "gid": 0,
+    "mode": "0600",
+    "links": 1
+  },
+  "ga36-android11/vendor.img": {
+    "bytes": 536870912,
+    "uid": 0,
+    "gid": 0,
+    "mode": "0600",
+    "links": 1
+  },
+  "larger_card_policy": "original 64GB retains exactly 24GiB per OS; larger raw pool grows before mount and data budgets split equally after fixed swap/system/reserve",
+  "hardware_test": "pending"
+}

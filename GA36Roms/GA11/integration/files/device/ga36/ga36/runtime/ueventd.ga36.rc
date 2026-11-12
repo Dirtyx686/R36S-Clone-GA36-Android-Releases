@@ -1,0 +1,9 @@
+/dev/disp 0660 system graphics
+/dev/mali 0666 root graphics
+/dev/mali0 0666 root graphics
+/dev/ion 0666 root graphics
+/dev/graphics/fb0 0660 system graphics
+/sys/devices/virtual/disp/disp/attr lcdbl 0660 system system
+/sys/devices/virtual/disp/disp/attr lcdbl_sync 0444 system system
+
+/dev/uinput 0660 root input

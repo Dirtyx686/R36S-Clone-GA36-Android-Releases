@@ -1,0 +1,437 @@
+diff --git a/libs/ui/GraphicBufferAllocator.cpp b/libs/ui/GraphicBufferAllocator.cpp
+index 943d13e..175f907 100644
+--- a/libs/ui/GraphicBufferAllocator.cpp
++++ b/libs/ui/GraphicBufferAllocator.cpp
+@@ -32,6 +32,7 @@
+ 
+ #include <ui/Gralloc.h>
+ #include <ui/Gralloc2.h>
++#include <android-base/properties.h>
+ #include <ui/Gralloc3.h>
+ #include <ui/Gralloc4.h>
+ #include <ui/GraphicBufferMapper.h>
+@@ -48,6 +49,16 @@ KeyedVector<buffer_handle_t,
+     GraphicBufferAllocator::alloc_rec_t> GraphicBufferAllocator::sAllocList;
+ 
+ GraphicBufferAllocator::GraphicBufferAllocator() : mMapper(GraphicBufferMapper::getInstance()) {
++    if (base::GetProperty("ro.hardware", "") == "ga36" &&
++        mMapper.getMapperVersion() == GraphicBufferMapper::Version::GRALLOC_2) {
++        mAllocator = std::make_unique<const Gralloc2Allocator>(
++                reinterpret_cast<const Gralloc2Mapper&>(mMapper.getGrallocMapper()));
++        if (mAllocator->isLoaded()) {
++            ALOGI("GA36_GRAPHICS_ALLOCATOR2_DIRECT");
++            return;
++        }
++        ALOGW("GA36 allocator2 unavailable; trying standard allocator fallback");
++    }
+     mAllocator = std::make_unique<const Gralloc4Allocator>(
+             reinterpret_cast<const Gralloc4Mapper&>(mMapper.getGrallocMapper()));
+     if (mAllocator->isLoaded()) {
+diff --git a/libs/ui/GraphicBufferMapper.cpp b/libs/ui/GraphicBufferMapper.cpp
+index d20bd7a..42ceb22 100644
+--- a/libs/ui/GraphicBufferMapper.cpp
++++ b/libs/ui/GraphicBufferMapper.cpp
+@@ -21,6 +21,7 @@
+ #include <ui/GraphicBufferMapper.h>
+ 
+ #include <grallocusage/GrallocUsageConversion.h>
++#include <android-base/properties.h>
+ 
+ // We would eliminate the non-conforming zero-length array, but we can't since
+ // this is effectively included from the Linux kernel
+@@ -47,11 +48,22 @@ ANDROID_SINGLETON_STATIC_INSTANCE( GraphicBufferMapper )
+ 
+ void GraphicBufferMapper::preloadHal() {
+     Gralloc2Mapper::preload();
++    // The GA36 exposes mapper2 only; do not probe absent mapper3/4 HALs.
++    if (base::GetProperty("ro.hardware", "") == "ga36") return;
+     Gralloc3Mapper::preload();
+     Gralloc4Mapper::preload();
+ }
+ 
+ GraphicBufferMapper::GraphicBufferMapper() {
++    if (base::GetProperty("ro.hardware", "") == "ga36") {
++        mMapper = std::make_unique<const Gralloc2Mapper>();
++        if (mMapper->isLoaded()) {
++            mMapperVersion = Version::GRALLOC_2;
++            ALOGI("GA36_GRAPHICS_MAPPER2_DIRECT");
++            return;
++        }
++        ALOGW("GA36 mapper2 unavailable; trying standard mapper fallback");
++    }
+     mMapper = std::make_unique<const Gralloc4Mapper>();
+     if (mMapper->isLoaded()) {
+         mMapperVersion = Version::GRALLOC_4;
+diff --git a/opengl/libs/EGL/egl_platform_entries.cpp b/opengl/libs/EGL/egl_platform_entries.cpp
+index b68a7cd..cb320a6 100644
+--- a/opengl/libs/EGL/egl_platform_entries.cpp
++++ b/opengl/libs/EGL/egl_platform_entries.cpp
+@@ -42,6 +42,8 @@
+ #include <unordered_map>
+ #include <string>
+ #include <thread>
++#include <vector>
++#include <stdio.h>
+ 
+ #include "../egl_impl.h"
+ 
+@@ -364,6 +366,55 @@ EGLBoolean eglGetConfigsImpl(EGLDisplay dpy,
+     return res;
+ }
+ 
++// The legacy VC renderer picks RGB565. Keep this workaround limited to
++// that process and an exact 565 window request; never lie about EGL config bits.
++static bool ga36GtaProcess() {
++    static const bool result = [] {
++        if (base::GetProperty("ro.hardware", "") != "ga36") return false;
++        char name[128] = {};
++        FILE* f = fopen("/proc/self/cmdline", "re");
++        if (!f) return false;
++        const size_t n = fread(name, 1, sizeof(name) - 1, f);
++        fclose(f);
++        const char* pkg = "com.rockstargames.gtavc";
++        const size_t len = strlen(pkg);
++        return n > len && !memcmp(name, pkg, len) &&
++                (name[len] == '\0' || name[len] == ':');
++    }();
++    return result;
++}
++
++static bool ga36PromoteGta565(const EGLint* attrs, bool eligible,
++                            std::vector<EGLint>& out) {
++    if (!eligible || !attrs) return false;
++    int red = -1, green = -1, blue = -1, alpha = 0;
++    int surface = EGL_WINDOW_BIT, color = EGL_RGB_BUFFER, id = 0;
++    size_t count = 0;
++    for (; count < 128 && attrs[count] != EGL_NONE; count += 2) {
++        const int key = attrs[count], value = attrs[count + 1];
++        switch (key) {
++            case EGL_RED_SIZE: if (red != -1) return false; red = value; break;
++            case EGL_GREEN_SIZE: if (green != -1) return false; green = value; break;
++            case EGL_BLUE_SIZE: if (blue != -1) return false; blue = value; break;
++            case EGL_ALPHA_SIZE: alpha = value; break;
++            case EGL_SURFACE_TYPE: surface = value; break;
++            case EGL_COLOR_BUFFER_TYPE: color = value; break;
++            case EGL_CONFIG_ID: id = value; break;
++            case EGL_COLOR_COMPONENT_TYPE_EXT:
++                if (value != EGL_COLOR_COMPONENT_TYPE_FIXED_EXT) return false;
++                break;
++        }
++    }
++    if (count >= 128 || red != 5 || green != 6 || blue != 5 || alpha != 0 ||
++        !(surface & EGL_WINDOW_BIT) || color != EGL_RGB_BUFFER || id > 0) return false;
++    out.assign(attrs, attrs + count + 1);
++    for (size_t i = 0; i < count; i += 2) {
++        if (out[i] == EGL_RED_SIZE || out[i] == EGL_GREEN_SIZE || out[i] == EGL_BLUE_SIZE)
++            out[i + 1] = 8;
++    }
++    return true;
++}
++
+ EGLBoolean eglChooseConfigImpl( EGLDisplay dpy, const EGLint *attrib_list,
+                                 EGLConfig *configs, EGLint config_size,
+                                 EGLint *num_config)
+@@ -380,6 +431,21 @@ EGLBoolean eglChooseConfigImpl( EGLDisplay dpy, const EGLint *attrib_list,
+ 
+     egl_connection_t* const cnx = &gEGLImpl;
+     if (cnx->dso) {
++        std::vector<EGLint> gtaAttrs;
++        if (!cnx->useAngle && ga36PromoteGta565(attrib_list, ga36GtaProcess(), gtaAttrs)) {
++            EGLint count = 0;
++            const EGLBoolean ok = cnx->egl.eglChooseConfig(
++                    dp->disp.dpy, gtaAttrs.data(), configs, config_size, &count);
++            if (ok == EGL_TRUE && count > 0) {
++                *num_config = count;
++                ALOGI("GA36_GTA_565_TO_888 selected_count=%d", count);
++                return ok;
++            }
++            // Preserve the original 565 request if this driver has no suitable config.
++            if (ok != EGL_TRUE) cnx->egl.eglGetError();
++            ALOGW("GA36_GTA_565_TO_888 unavailable_using_original_config");
++        }
++
+         if (attrib_list) {
+             if (base::GetBoolProperty("debug.egl.force_msaa", false)) {
+                 size_t attribCount = 0;
+@@ -622,8 +688,28 @@ void getNativePixelFormat(EGLDisplay dpy, egl_connection_t* cnx, EGLConfig confi
+     // modify the EGLconfig's format before setting the native window's
+     // format.
+ 
++    static const bool ga36 = base::GetProperty("ro.hardware", "") == "ga36";
+     EGLint componentType = EGL_COLOR_COMPONENT_TYPE_FIXED_EXT;
+-    cnx->egl.eglGetConfigAttrib(dpy, config, EGL_COLOR_COMPONENT_TYPE_EXT, &componentType);
++    bool queryComponentType = !ga36 || cnx->useAngle;
++    if (!queryComponentType) {
++        // r4p0 does not advertise pixel-format-float. Querying its attribute
++        // anyway leaves EGL_BAD_ATTRIBUTE pending for the caller's next check.
++        const char* extensions = cnx->egl.eglQueryString(dpy, EGL_EXTENSIONS);
++        const char* name = "EGL_EXT_pixel_format_float";
++        const size_t length = strlen(name);
++        const char* cursor = extensions;
++        while (cursor && (cursor = strstr(cursor, name))) {
++            if ((cursor == extensions || cursor[-1] == ' ') &&
++                (cursor[length] == ' ' || cursor[length] == '\0')) {
++                queryComponentType = true;
++                break;
++            }
++            cursor += length;
++        }
++    }
++    if (queryComponentType) {
++        cnx->egl.eglGetConfigAttrib(dpy, config, EGL_COLOR_COMPONENT_TYPE_EXT, &componentType);
++    }
+ 
+     EGLint a = 0;
+     EGLint r, g, b;
+@@ -672,6 +758,27 @@ void getNativePixelFormat(EGLDisplay dpy, egl_connection_t* cnx, EGLConfig confi
+             *format = HAL_PIXEL_FORMAT_RGBA_FP16;
+         }
+     }
++
++    // Legacy GA36 Mali configurations carry their native channel ordering in
++    // EGL_NATIVE_VISUAL_ID, including 16-bit configurations used by old games.
++    // Do not infer that ordering from component widths. Modern/ANGLE and
++    // float/10-bit configurations retain the normal Android path.
++    if (ga36 && !cnx->useAngle && componentType == EGL_COLOR_COMPONENT_TYPE_FIXED_EXT &&
++        r > 0 && r <= 8 && g > 0 && g <= 8 && b > 0 && b <= 8 && a >= 0 && a <= 8) {
++        EGLint nativeVisual = 0;
++        if (cnx->egl.eglGetConfigAttrib(dpy, config, EGL_NATIVE_VISUAL_ID, &nativeVisual) ==
++                    EGL_TRUE) {
++            const int inferred = *format;
++            if (nativeVisual == HAL_PIXEL_FORMAT_RGBA_8888 ||
++                nativeVisual == HAL_PIXEL_FORMAT_RGBX_8888 ||
++                nativeVisual == HAL_PIXEL_FORMAT_RGB_565 ||
++                nativeVisual == HAL_PIXEL_FORMAT_BGRA_8888) {
++                *format = static_cast<android_pixel_format>(nativeVisual);
++            }
++            ALOGI("GA36_EGL_NATIVE_FORMAT inferred=%d native=%d selected=%d rgba=%d/%d/%d/%d",
++                  inferred, nativeVisual, *format, r, g, b, a);
++        }
++    }
+ }
+ 
+ EGLBoolean sendSurfaceMetadata(egl_surface_t* s) {
+diff --git a/services/inputflinger/dispatcher/InputDispatcher.cpp b/services/inputflinger/dispatcher/InputDispatcher.cpp
+index ab1c132..a6ed726 100644
+--- a/services/inputflinger/dispatcher/InputDispatcher.cpp
++++ b/services/inputflinger/dispatcher/InputDispatcher.cpp
+@@ -58,6 +58,7 @@ static constexpr bool DEBUG_FOCUS = false;
+ #include <sstream>
+ 
+ #include <android-base/chrono_utils.h>
++#include <android-base/properties.h>
+ #include <android-base/stringprintf.h>
+ #include <binder/Binder.h>
+ #include <input/InputDevice.h>
+@@ -76,6 +77,30 @@ using android::base::StringPrintf;
+ 
+ namespace android::inputdispatcher {
+ 
++// Wardrum's legacy gamepad path updates its native button mask but can return
++// unhandled. Do not also synthesize keyboard fallback keys into the same game.
++static bool ga36GtaNativeButton(bool ga36, const std::string& window, uint32_t source,
++                                int32_t scan, int32_t key) {
++    if (!ga36 || window.find("com.rockstargames.gtavc/") == std::string::npos ||
++        (source & AINPUT_SOURCE_GAMEPAD) != AINPUT_SOURCE_GAMEPAD) return false;
++    switch (scan) {
++        case 304: return key == AKEYCODE_BUTTON_A;
++        case 305: return key == AKEYCODE_BUTTON_B;
++        case 307: return key == AKEYCODE_BUTTON_X;
++        case 308: return key == AKEYCODE_BUTTON_Y;
++        case 310: return key == AKEYCODE_BUTTON_L1;
++        case 311: return key == AKEYCODE_BUTTON_R1;
++        case 312: return key == AKEYCODE_BUTTON_L2;
++        case 313: return key == AKEYCODE_BUTTON_R2;
++        case 314: return key == AKEYCODE_BUTTON_SELECT;
++        case 315: return key == AKEYCODE_BUTTON_START;
++        case 317: return key == AKEYCODE_BUTTON_THUMBL;
++        case 318: return key == AKEYCODE_BUTTON_THUMBR;
++        default: return false;
++    }
++}
++
++
+ // Default input dispatching timeout if there is no focused application or paused window
+ // from which to determine an appropriate dispatching timeout.
+ constexpr std::chrono::nanoseconds DEFAULT_INPUT_DISPATCHING_TIMEOUT = 5s;
+@@ -3260,6 +3285,15 @@ void InputDispatcher::notifyMotion(const NotifyMotionArgs* args) {
+ }
+ 
+ bool InputDispatcher::shouldSendMotionToInputFilterLocked(const NotifyMotionArgs* args) {
++    // GA36's accessibility service filters FN keys, not analog motion. The
++    // filter's reinjection path changes hardware device IDs to Virtual -1,
++    // which legacy games reject. Keep physical joystick motion on the normal
++    // trusted reader path; key filtering and app injection stay unchanged.
++    static const bool ga36Hardware = android::base::GetProperty("ro.hardware", "") == "ga36";
++    if (ga36Hardware &&
++        (args->source & AINPUT_SOURCE_CLASS_MASK) == AINPUT_SOURCE_CLASS_JOYSTICK) {
++        return false;
++    }
+     return mInputFilterEnabled;
+ }
+ 
+@@ -4875,6 +4909,27 @@ bool InputDispatcher::afterKeyEventLockedInterruptible(const sp<Connection>& con
+         connection->inputState.removeFallbackKey(originalKeyCode);
+     }
+ 
++    const auto ga36Window = getWindowHandleLocked(connection->inputChannel->getConnectionToken());
++    static const bool ga36Hardware = android::base::GetProperty("ro.hardware", "") == "ga36";
++    if (!handled && hasForegroundTarget && ga36Window &&
++        ga36GtaNativeButton(ga36Hardware, ga36Window->getName(), keyEntry.source,
++                           keyEntry.scanCode, keyEntry.keyCode)) {
++        // Preserve UP/cancellation ownership if a fallback was already latched.
++        if (fallbackKeyCode >= 0) {
++            CancelationOptions options(CancelationOptions::CANCEL_FALLBACK_EVENTS,
++                                       "GA36 GTA native controller owns this key");
++            options.keyCode = fallbackKeyCode;
++            synthesizeCancelationEventsForConnectionLocked(connection, options);
++        }
++        connection->inputState.removeFallbackKey(originalKeyCode);
++        static unsigned ga36NoFallbackLogs = 0;
++        if (ga36NoFallbackLogs++ < 24) {
++            ALOGI("GA36_GTA_NATIVE_KEY_ONLY scan=%d key=%d action=%d",
++                  keyEntry.scanCode, keyEntry.keyCode, keyEntry.action);
++        }
++        return false;
++    }
++
+     if (handled || !hasForegroundTarget) {
+         // If the application handles the original key for which we previously
+         // generated a fallback or if the window is not a foreground window,
+diff --git a/services/inputflinger/reader/EventHub.cpp b/services/inputflinger/reader/EventHub.cpp
+index 1b72b54..18db8d2 100644
+--- a/services/inputflinger/reader/EventHub.cpp
++++ b/services/inputflinger/reader/EventHub.cpp
+@@ -38,6 +38,7 @@
+ #include "EventHub.h"
+ 
+ #include <android-base/stringprintf.h>
++#include <android-base/properties.h>
+ #include <cutils/properties.h>
+ #include <openssl/sha.h>
+ #include <utils/Errors.h>
+@@ -1441,7 +1442,10 @@ status_t EventHub::openDeviceLocked(const char* devicePath) {
+             hasKeycodeLocked(device, AKEYCODE_DPAD_DOWN) &&
+             hasKeycodeLocked(device, AKEYCODE_DPAD_LEFT) &&
+             hasKeycodeLocked(device, AKEYCODE_DPAD_RIGHT) &&
+-            hasKeycodeLocked(device, AKEYCODE_DPAD_CENTER)) {
++            (hasKeycodeLocked(device, AKEYCODE_DPAD_CENTER) ||
++             (device->identifier.name == "micro_gamepad" &&
++              android::base::GetProperty("ro.hardware", "") == "ga36" &&
++              hasKeycodeLocked(device, AKEYCODE_BUTTON_A)))) {
+             device->classes |= INPUT_DEVICE_CLASS_DPAD;
+         }
+ 
+diff --git a/services/inputflinger/reader/mapper/JoystickInputMapper.cpp b/services/inputflinger/reader/mapper/JoystickInputMapper.cpp
+index 030a846..1bb96e3 100644
+--- a/services/inputflinger/reader/mapper/JoystickInputMapper.cpp
++++ b/services/inputflinger/reader/mapper/JoystickInputMapper.cpp
+@@ -160,6 +160,11 @@ void JoystickInputMapper::configure(nsecs_t when, const InputReaderConfiguration
+                 axis.filter = axis.fuzz ? axis.fuzz : axis.flat * 0.25f;
+ 
+                 mAxes.add(abs, axis);
++                if (getDeviceName() == "micro_gamepad") {
++                    ALOGI("GA36_JOYSTICK_AXIS raw=%d android=%d min=%d max=%d flat=%d fuzz=%d",
++                          abs, axisInfo.axis, rawAxisInfo.minValue, rawAxisInfo.maxValue,
++                          rawFlat, rawAxisInfo.fuzz);
++                }
+             }
+         }
+ 
+@@ -253,6 +258,14 @@ void JoystickInputMapper::reset(nsecs_t when) {
+ }
+ 
+ void JoystickInputMapper::process(const RawEvent* rawEvent) {
++    static unsigned ga36RawAxisCount = 0;
++    if (getDeviceName() == "micro_gamepad" && rawEvent->type == EV_ABS &&
++        ga36RawAxisCount < 64) {
++        ++ga36RawAxisCount;
++        ALOGI("GA36_JOYSTICK_RAW axis=%d value=%d configured_axes=%zu",
++              rawEvent->code, rawEvent->value, mAxes.size());
++    }
++
+     switch (rawEvent->type) {
+         case EV_ABS: {
+             ssize_t index = mAxes.indexOfKey(rawEvent->code);
+@@ -339,6 +352,18 @@ void JoystickInputMapper::sync(nsecs_t when, bool force) {
+                           &pointerProperties, &pointerCoords, 0, 0,
+                           AMOTION_EVENT_INVALID_CURSOR_POSITION,
+                           AMOTION_EVENT_INVALID_CURSOR_POSITION, 0, /* videoFrames */ {});
++    static nsecs_t ga36TraceTime = 0;
++    static unsigned ga36TraceCount = 0;
++    if (getDeviceName() == "micro_gamepad" && ga36TraceCount < 100 &&
++        when - ga36TraceTime >= 200000000LL) {
++        ga36TraceTime = when;
++        ++ga36TraceCount;
++        ALOGI("GA36_INPUT_AXES X=%.3f Y=%.3f Z=%.3f RZ=%.3f",
++              pointerCoords.getAxisValue(AMOTION_EVENT_AXIS_X),
++              pointerCoords.getAxisValue(AMOTION_EVENT_AXIS_Y),
++              pointerCoords.getAxisValue(AMOTION_EVENT_AXIS_Z),
++              pointerCoords.getAxisValue(AMOTION_EVENT_AXIS_RZ));
++    }
+     getListener()->notifyMotion(&args);
+ }
+ 
+diff --git a/services/inputflinger/reader/mapper/KeyboardInputMapper.cpp b/services/inputflinger/reader/mapper/KeyboardInputMapper.cpp
+index f98b928..403898c 100644
+--- a/services/inputflinger/reader/mapper/KeyboardInputMapper.cpp
++++ b/services/inputflinger/reader/mapper/KeyboardInputMapper.cpp
+@@ -369,6 +369,11 @@ void KeyboardInputMapper::processKey(nsecs_t when, bool down, int32_t scanCode,
+     NotifyKeyArgs args(getContext()->getNextId(), when, getDeviceId(), mSource, getDisplayId(),
+                        policyFlags, down ? AKEY_EVENT_ACTION_DOWN : AKEY_EVENT_ACTION_UP,
+                        AKEY_EVENT_FLAG_FROM_SYSTEM, keyCode, scanCode, keyMetaState, downTime);
++    static unsigned ga36TraceCount = 0;
++    if (getDeviceName() == "micro_gamepad" && ga36TraceCount++ < 160) {
++        ALOGI("GA36_INPUT_KEY source=0x%08x scan=%d key=%d down=%d", mSource, scanCode,
++              keyCode, down);
++    }
+     getListener()->notifyKey(&args);
+ }
+ 
+diff --git a/services/surfaceflinger/BufferLayer.cpp b/services/surfaceflinger/BufferLayer.cpp
+index f0b0200..bb858f3 100644
+--- a/services/surfaceflinger/BufferLayer.cpp
++++ b/services/surfaceflinger/BufferLayer.cpp
+@@ -24,6 +24,9 @@
+ #define ATRACE_TAG ATRACE_TAG_GRAPHICS
+ 
+ #include "BufferLayer.h"
++#include <android-base/properties.h>
++#include <atomic>
++#include <string.h>
+ 
+ #include <compositionengine/CompositionEngine.h>
+ #include <compositionengine/LayerFECompositionState.h>
+@@ -141,6 +144,16 @@ static constexpr mat4 inverseOrientation(uint32_t transform) {
+     return inverse(tr);
+ }
+ 
++static bool ga36GtaSurfaceNeedsRB(const char* name, bool ga36) {
++    return ga36 && name && strstr(name, "SurfaceView") &&
++            strstr(name, "com.rockstargames.gtavc/");
++}
++
++static mat4 ga36RedBlueSwap() {
++    return mat4(vec4(0, 0, 1, 0), vec4(0, 1, 0, 0),
++                vec4(1, 0, 0, 0), vec4(0, 0, 0, 1));
++}
++
+ std::optional<compositionengine::LayerFE::LayerSettings> BufferLayer::prepareClientComposition(
+         compositionengine::LayerFE::ClientCompositionTargetSettings& targetSettings) {
+     ATRACE_CALL();
+@@ -189,6 +202,15 @@ std::optional<compositionengine::LayerFE::LayerSettings> BufferLayer::prepareCli
+     const State& s(getDrawingState());
+     layer.source.buffer.buffer = mBufferInfo.mBuffer;
+     layer.source.buffer.isOpaque = isOpaque(s);
++    static const bool ga36 = android::base::GetProperty("ro.hardware", "") == "ga36";
++    if (ga36GtaSurfaceNeedsRB(getName().c_str(), ga36)) {
++        // Only this legacy game's SurfaceView is affected. Preserve green,
++        // alpha and the pre-existing transform; the launcher/display stay unchanged.
++        layer.colorTransform = ga36RedBlueSwap() * layer.colorTransform;
++        static std::atomic_flag traced = ATOMIC_FLAG_INIT;
++        if (!traced.test_and_set()) ALOGI("GA36_GTA_RB_CHANNEL_CORRECTION surface=%s", getName().c_str());
++    }
++
+     layer.source.buffer.fence = mBufferInfo.mFence;
+     layer.source.buffer.textureName = mTextureName;
+     layer.source.buffer.usePremultipliedAlpha = getPremultipledAlpha();

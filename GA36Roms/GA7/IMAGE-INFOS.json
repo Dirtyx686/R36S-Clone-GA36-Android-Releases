@@ -1,0 +1,15 @@
+{
+  "version": "Beta V1 \u00b7 P39 Clean",
+  "os": "7",
+  "file": "GA7-Clean-P39.img.gz",
+  "compressed_sha256": "da8d449ec2b3feb638100b0f882ef342e684c460c3cebc10ece934a73ef38f66",
+  "image_sha256": "046582d8c7e39cebf0ff9644fb0adfe32b4f706e93278bd21bd56125d1156b03",
+  "header_sha256": "edf5f9accc52b0bd39b4f745d3988ad6a6a902ee9c4c7a01369d3cb247d61ebd",
+  "image_bytes": 31138512896,
+  "board": "GA36 Allwinner A33,512MB RAM",
+  "layout": "GA36-clean-v2",
+  "zram_mib": 256,
+  "sd_swap_gib": 4,
+  "not_for_flashing": true,
+  "hardware_acceptance": "failed: user reports separate images do not boot; working dual-boot layout is the next clean candidate"
+}

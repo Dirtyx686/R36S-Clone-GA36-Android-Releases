@@ -1,0 +1,9 @@
+{
+  "url": "https://dl.google.com/android/repository/sys-img/android/armeabi-v7a-24_r07.zip",
+  "bytes": 283677512,
+  "sha1": "3454546b4eed2d6c3dd06d47757d6da9f4176033",
+  "sha256": "42690977fe4b97b0643da11a2b42742b2e3d5b8849dcdd6893e0b92d6618c91d",
+  "api": 24,
+  "abi": "armeabi-v7a",
+  "revision": 7
+}

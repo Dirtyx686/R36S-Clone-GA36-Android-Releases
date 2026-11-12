@@ -1,0 +1,23 @@
+diff --git a/config/lineage_sdk_common.mk b/config/lineage_sdk_common.mk
+index db407c8..b736838 100644
+--- a/config/lineage_sdk_common.mk
++++ b/config/lineage_sdk_common.mk
+@@ -5,7 +5,6 @@ PRODUCT_COPY_FILES += \
+     vendor/lineage/config/permissions/org.lineageos.hardware.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/org.lineageos.hardware.xml \
+     vendor/lineage/config/permissions/org.lineageos.livedisplay.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/org.lineageos.livedisplay.xml \
+     vendor/lineage/config/permissions/org.lineageos.performance.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/org.lineageos.performance.xml \
+-    vendor/lineage/config/permissions/org.lineageos.profiles.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/org.lineageos.profiles.xml \
+     vendor/lineage/config/permissions/org.lineageos.settings.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/org.lineageos.settings.xml \
+     vendor/lineage/config/permissions/org.lineageos.trust.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/org.lineageos.trust.xml
+ 
+@@ -34,3 +33,10 @@ ifndef LINEAGE_PLATFORM_REV
+   # If you are doing a release and this is NOT 0, you are almost certainly doing it wrong
+   LINEAGE_PLATFORM_REV := 0
+ endif
++
++# GA36 console: keep the permission-file path but omit the unused profiles feature.
++ifeq ($(GA36_MINIMAL_CONSOLE),true)
++PRODUCT_COPY_FILES += device/ga36/ga36/runtime/ga36-no-profiles.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/org.lineageos.profiles.xml
++else
++PRODUCT_COPY_FILES += vendor/lineage/config/permissions/org.lineageos.profiles.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/org.lineageos.profiles.xml
++endif

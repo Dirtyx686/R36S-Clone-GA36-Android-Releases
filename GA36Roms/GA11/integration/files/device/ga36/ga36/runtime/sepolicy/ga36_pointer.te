@@ -1,0 +1,11 @@
+# Existing AOSP virtual_touchpad domain already has bounded uinput write access.
+# Add read-only physical controller discovery and its board-local diagnostic log.
+allow virtual_touchpad input_device:dir r_dir_perms;
+allow virtual_touchpad input_device:chr_file r_file_perms;
+allow virtual_touchpad ga36_runtime_data_file:dir search;
+allow virtual_touchpad ga36_runtime_data_file:file { open write append getattr };
+
+# AOSP reserves executable-inode labelling for the trusted boot/kernel domain.
+# Only the verified tmpfs helper can receive the fixed virtual_touchpad label.
+allow kernel tmpfs:file { getattr relabelfrom };
+allow kernel virtual_touchpad_exec:file { getattr relabelto };

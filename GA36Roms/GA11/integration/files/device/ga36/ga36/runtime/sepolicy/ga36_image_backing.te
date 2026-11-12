@@ -1,0 +1,24 @@
+# Nested loop reads in this 3.4 driver call security_file_permission from
+# the kernel domain. Only the three private Android11 image files carry this
+# type; Android7 data and the shared swap file retain all original metadata.
+type ga36_loop_image_file, file_type;
+type ga36_pool_device, dev_type;
+allow kernel ga36_loop_image_file:file { read write };
+allow kernel ga36_pool_device:blk_file { read write };
+
+# devtmpfs nodes created before the first policy default to device. Reads must
+# work during the policy-load -> second-stage /dev/block restorecon window.
+# This grants no user process access and no unlabeled-file permission.
+allow kernel device:blk_file read;
+allow init device:blk_file { getattr relabelfrom };
+allow init ga36_pool_device:blk_file { getattr relabelfrom relabelto };
+
+# Android first-stage /dev is tmpfs. The old loop driver's backing-file reads
+# run in kernel context before second-stage /dev/block restorecon. Mirror the
+# existing device:blk_file read bridge for this standard first-stage type.
+# No user process access and no additional write or unlabeled permission.
+allow kernel tmpfs:blk_file read;
+
+# Our early loop2 pool mount and pre-policy zRAM setup create these before
+# ueventd. Permit init's normal recursive /dev/block restorecon on them.
+allow init { loop_device ram_device }:blk_file relabelto;

@@ -1,0 +1,7 @@
+type sysfs_ga36_lcdbl, fs_type, sysfs_type;
+type ga36_runtime_data_file, file_type, data_file_type;
+allow hal_light_default sysfs_ga36_lcdbl:file rw_file_perms;
+allow hal_light_default sysfs:dir search;
+allow hal_light_default vendor_data_file:dir search;
+allow hal_light_default ga36_runtime_data_file:dir search;
+allow hal_light_default ga36_runtime_data_file:file { open append write getattr setattr };

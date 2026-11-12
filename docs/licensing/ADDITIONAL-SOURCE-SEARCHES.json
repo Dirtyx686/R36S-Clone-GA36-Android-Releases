@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-12",
+  "searched": [
+    {
+      "repo": "linux-sunxi/sunxi-mali-proprietary",
+      "revision": "1c5063f43cdc9de341c0d63b2e3921cab86c7742",
+      "finding": "r3p2 packages; README only; not our r4p0 Android binaries"
+    },
+    {
+      "repo": "NextThingCo/chip-mali-userspace",
+      "revision": "a9d2b5060103baa3f5d6e98011e28f2d4fae2fa6",
+      "finding": "ARM redistribution EULA present under debian/copyright; GNU/Linux r6p0 binary; not established to cover our r4p0 Android binaries"
+    },
+    {
+      "repo": "bootlin/mali-blobs",
+      "revision": "418f55585e76f375792dbebb3e97532f0c1c556d",
+      "finding": "Allwinner EULA and Bootlin permission statement for r6p2/r8p1 Linux packages; exact Android r4p0 grant not established"
+    },
+    {
+      "repo": "CodeZombie/goodluckOS",
+      "revision": "b19b8110862515c85f2a379492c654222e7c439a",
+      "tree_entries": 223,
+      "any_path_named_udt_joystick": false,
+      "finding": "newer board port or retained stock bootchain; exact legacy vendor module/dirty U-Boot source not located"
+    },
+    {
+      "repo": "ricardomm7/ga36-bsp",
+      "revision": "d9953a259a1861beae3fc16a2d2ea20adeb5f4f1",
+      "tree_entries": 73,
+      "any_path_named_udt_joystick": false,
+      "finding": "newer board port or retained stock bootchain; exact legacy vendor module/dirty U-Boot source not located"
+    },
+    {
+      "repo": "mannapijush1coretech/Ga36OS",
+      "revision": "3b80882006260fd32f4e826fe5bad319cd4deb06",
+      "tree_entries": 600,
+      "any_path_named_udt_joystick": false,
+      "finding": "newer board port or retained stock bootchain; exact legacy vendor module/dirty U-Boot source not located"
+    },
+    {
+      "repo": "CodeZombie/GA36-MB-Linux",
+      "revision": "9546630e754c7c565f02060680470fe5df05a6f8",
+      "tree_entries": 13,
+      "any_path_named_udt_joystick": false,
+      "finding": "GPL2 serdev analog joystick driver; newer kernel API, not source of stock 3.4 udt_joystick.ko"
+    }
+  ],
+  "negative_lookup": [
+    {
+      "repo": "u-boot/u-boot",
+      "commit": "05bceb2",
+      "result": "No such commit (422)"
+    },
+    {
+      "repo": "LibreELEC/u-boot",
+      "commit": "05bceb2",
+      "result": "repository/commit unavailable (404)"
+    }
+  ]
+}

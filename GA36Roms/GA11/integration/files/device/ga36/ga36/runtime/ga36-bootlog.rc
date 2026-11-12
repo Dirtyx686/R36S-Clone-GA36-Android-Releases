@@ -1,0 +1,10 @@
+# GA36 functional console configuration. Normal Android logd/crash handling
+# stays active; no persistent SD logcat, kernel snapshot or input recorder.
+on early-init
+    # The codec config has its final label before transition into init.
+    mount tmpfs tmpfs /odm/etc remount ro nosuid nodev noexec
+
+# One-time reversible system-app profile and console window behavior.
+# No game APK, OBB or save is touched. No separately registered test service.
+on property:sys.boot_completed=1
+    exec_background u:r:shell:s0 shell shell log readproc -- /system/bin/sh -c "[ ! -f /data/local/tmp/ga36-clean-P37 ] || exit 0; installed=$$(/system/bin/cmd package list packages --user 0) || exit 1; echo \"$$installed\" | /system/bin/grep -Fxq package:android || exit 1; ok=1; for p in com.android.camera com.android.camera2 com.android.gallery3d com.android.music com.android.calendar com.android.email com.android.exchange com.google.android.gm com.google.android.talk com.android.deskclock com.android.quicksearchbox com.google.android.googlequicksearchbox com.android.vending com.android.browser com.android.egg com.android.traceur com.android.bips com.android.printspooler com.android.printservice.recommendation com.android.dreams.basic com.android.dreams.phototable com.android.wallpaper.livepicker com.android.wallpapercropper com.android.bluetoothmidiservice com.android.bluetooth com.android.simappdialog com.android.cellbroadcastreceiver com.android.cellbroadcastservice; do echo \"$$installed\" | /system/bin/grep -Fxq \"package:$$p\" || continue; /system/bin/cmd package disable-user --user 0 \"$$p\" >/dev/null 2>&1 || ok=0; done; [ \"$$ok\" = 1 ] && /system/bin/settings put global window_animation_scale 0.5 && /system/bin/settings put global transition_animation_scale 0.5 && /system/bin/settings put global animator_duration_scale 0.5 && /system/bin/settings put global policy_control 'immersive.full=apps:immersive.preconfirms=*' && /system/bin/settings put global heads_up_notifications_enabled 0 && /system/bin/rm -f /data/local/tmp/ga36-gta-install.sh /data/local/tmp/ga36-gta-install.log && echo GA36_P37_CONSOLE_PROFILE_APPLIED > /data/local/tmp/ga36-clean-P37"

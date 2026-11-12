@@ -1,0 +1,39 @@
+{
+  "FixedFileInfo": {
+    "FileVersion": {
+      "Major": 4,
+      "Minor": 0,
+      "Patch": 0,
+      "Build": 0
+    },
+    "ProductVersion": {
+      "Major": 4,
+      "Minor": 0,
+      "Patch": 0,
+      "Build": 0
+    },
+    "FileFlagsMask": "3f",
+    "FileFlags": "00",
+    "FileOS": "040004",
+    "FileType": "01",
+    "FileSubType": "00"
+  },
+  "StringFileInfo": {
+    "CompanyName": "GA36 project",
+    "FileDescription": "GA36 Desktop Flasher - GA7 and GA11",
+    "FileVersion": "4.0.0.0",
+    "InternalName": "GA36DesktopFlasher",
+    "LegalCopyright": "Copyright 2026 GA36 project. MIT.",
+    "OriginalFilename": "GA36-Flasher-Windows.exe",
+    "ProductName": "GA36 Desktop Flasher",
+    "ProductVersion": "4.0.0.0"
+  },
+  "VarFileInfo": {
+    "Translation": {
+      "LangID": "0409",
+      "CharsetID": "04B0"
+    }
+  },
+  "IconPath": "assets/icon.ico",
+  "ManifestPath": "app.manifest"
+}

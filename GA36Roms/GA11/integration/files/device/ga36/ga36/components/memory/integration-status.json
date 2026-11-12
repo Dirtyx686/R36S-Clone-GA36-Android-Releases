@@ -1,0 +1,14 @@
+{
+  "stage": "Android11 preparation, not installed",
+  "zram_bytes": 268435456,
+  "zram_priority": 100,
+  "sd_swap_bytes": 4294967296,
+  "sd_swap_priority": 10,
+  "sd_runtime_path": "/mnt/ga36-swap/swapfile",
+  "shared_swap": "same prepared file across mutually exclusive boots; never format/create at boot",
+  "early_zram": "before app startup once SELinux/init integration is validated",
+  "sd_swap": "after framework startup; missing storage must not stop boot",
+  "SELinux_domain_ready": false,
+  "automatic_init_service_installed": false,
+  "Android7_unchanged": true
+}

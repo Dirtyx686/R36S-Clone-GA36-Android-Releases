@@ -1,0 +1,62 @@
+{
+  "scope": "public source selection only; private launcher and current ROM images unchanged",
+  "omitted_count": 11,
+  "omitted": [
+    {
+      "name": "res/drawable-nodpi/ga36_dashboard_art.jpg",
+      "sha256": "cb297ebf38ec8937a8e5ff6726164b1e0573beb1ad70c4db953950e9a6d8c7a2",
+      "bytes": 70857
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_com_pastagames_ro1mobile.png",
+      "sha256": "3d9b81e8d6f9c74a90fa189660675e9341070c1d61b1192cccb106178e71ff57",
+      "bytes": 35671
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_de_simcitybrowser_app_r36s.png",
+      "sha256": "a1d1801e9e14cc08a9103a5df4603330f09ee50620bb3d2711e1a07f9b495160",
+      "bytes": 25999
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_com_ea_games_simsfreeplay_row.png",
+      "sha256": "6dd14146b536421c7c93f46c8e28e67792f20ec0f9b56b53d058023868662043",
+      "bytes": 20590
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_com_rockstargames_gtavc.png",
+      "sha256": "ce95f57ff64ec8b77a8685b9717bef29ef1968491cc81f39847da796a5273b98",
+      "bytes": 13081
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_com_gameloft_android_anmp_gloftrahm.png",
+      "sha256": "ba9dc0f49b93ae230897d8171366094f2599e5135a0f4c8e99ccec9e9c9be8cb",
+      "bytes": 37211
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_durmus_mobilegame.png",
+      "sha256": "98741992f162534cced7fb7c776672fe36b4b389fb56b053c592294c7d17fc43",
+      "bytes": 26930
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_com_ngc_gtav.png",
+      "sha256": "1100e6ad137cb1700ae3ffe5eaf83ac6741d4942797efeb1f137aa26dc7729a4",
+      "bytes": 18216
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_com_ea_game_simcitymobile_row.png",
+      "sha256": "c155f351a30907d7e98d4293c82450f6d313e913dbe18fbf4f99ce57ab614c36",
+      "bytes": 29542
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_com_gta4_cgs.png",
+      "sha256": "70bd7e982a424aa86161115418124d64a4a7f2dbcf22d9c93fd9fc2a3c1254d9",
+      "bytes": 6747
+    },
+    {
+      "name": "res/drawable-nodpi-v4/ga36_logo_nova_snowrunner.png",
+      "sha256": "16334340ea82d56b9ef2de47f4d7b3634efc7e53d66bfa8ec6588dd9ffc97653",
+      "bytes": 38214
+    }
+  ],
+  "fallback": "missing optional bundled resources use existing neutral/generated icon behavior; installed app icons may be loaded at runtime"
+}

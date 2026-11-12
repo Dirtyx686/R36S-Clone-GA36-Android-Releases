@@ -1,0 +1,24 @@
+# Large release assets remain outside the Git source tree.
+*.img
+*.img.gz
+*.ext4
+*.squashfs
+*.apk
+*.obb
+*.so
+*.ko
+*.pk8
+*.pem
+*.key
+*.keystore
+*.jks
+*.idsig
+*.exe
+*.tar.gz
+*.zip
+.env*
+__pycache__/
+**/bin/
+**/classes/
+/tools/flasher/src/vendor/
+.git/

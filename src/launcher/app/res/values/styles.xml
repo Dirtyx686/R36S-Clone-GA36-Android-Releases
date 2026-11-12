@@ -1,0 +1,12 @@
+<resources>
+ <style name="GA36Fullscreen" parent="android:style/Theme.Material.NoActionBar">
+  <item name="android:windowFullscreen">true</item>
+  <item name="android:windowNoTitle">true</item>
+  <item name="android:windowIsTranslucent">false</item>
+  <item name="android:windowShowWallpaper">false</item>
+  <item name="android:windowAnimationStyle">@null</item>
+  <item name="android:windowActionModeOverlay">true</item>
+  <item name="android:colorAccent">#83de39</item>
+  <item name="android:windowBackground">@drawable/fullscreen_background</item>
+ </style>
+</resources>
